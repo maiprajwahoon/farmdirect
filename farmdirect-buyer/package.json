@@ -1,0 +1,30 @@
+{
+  "name": "farmdirect-buyer",
+  "version": "1.0.0",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "__UNSAFE_EXPO_HOME_DIRECTORY=./.expo EXPO_NO_TELEMETRY=1 expo start",
+    "android": "__UNSAFE_EXPO_HOME_DIRECTORY=./.expo EXPO_NO_TELEMETRY=1 expo start --android",
+    "ios": "__UNSAFE_EXPO_HOME_DIRECTORY=./.expo EXPO_NO_TELEMETRY=1 expo start --ios",
+    "web": "__UNSAFE_EXPO_HOME_DIRECTORY=./.expo EXPO_NO_TELEMETRY=1 expo start --web",
+    "check": "__UNSAFE_EXPO_HOME_DIRECTORY=./.expo EXPO_NO_TELEMETRY=1 expo export --platform android"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "~57.0.16",
+    "@expo/vector-icons": "^15.1.1",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "expo": "^57.0.0",
+    "expo-camera": "~57.0.5",
+    "expo-image-picker": "~57.0.20",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "~57.0.0"
+  }
+}

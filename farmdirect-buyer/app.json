@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "FarmDirect Buyer",
+    "slug": "farmdirect-buyer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "farmdirect",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.farmdirect.buyer",
+      "infoPlist": {
+        "NSCameraUsageDescription": "FarmDirect uses the camera for AI produce scanning.",
+        "NSPhotoLibraryUsageDescription": "FarmDirect uses your photo library when you choose a produce image to scan."
+      }
+    },
+    "android": {
+      "package": "com.farmdirect.buyer",
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES"
+      ]
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-image-picker",
+      "expo-status-bar"
+    ]
+  }
+}

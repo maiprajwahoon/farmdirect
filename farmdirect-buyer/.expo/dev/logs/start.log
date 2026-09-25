@@ -1,0 +1,130 @@
+{"_e":"root:init","_t":1790265165901,"format":"v0-jsonl","version":"57.0.27"}
+{"_e":"env:mode","_t":1790265165901,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1790265165907,"mode":"development","files":["../../../.env"],"env":{}}
+{"_e":"devserver:start","_t":1790265166195,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1790265166449,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1790265166726,"plugins":[]}
+{"_e":"metro:instantiate","_t":1790265167281,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1790265182453,"id":"1","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265182453,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790265182455,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790265182888,"id":"1","progress":0.010000000000000002,"total":1,"current":1}
+{"_e":"metro:bundling:progress","_t":1790265182989,"id":"1","progress":0.25,"total":18,"current":9}
+{"_e":"metro:bundling:progress","_t":1790265183089,"id":"1","progress":0.2688614540466392,"total":27,"current":14}
+{"_e":"metro:bundling:progress","_t":1790265183189,"id":"1","progress":0.31821170282708744,"total":39,"current":22}
+{"_e":"metro:bundling:progress","_t":1790265183365,"id":"1","progress":0.3477975016436555,"total":39,"current":23}
+{"_e":"metro:bundling:progress","_t":1790265183466,"id":"1","progress":0.4444444444444444,"total":48,"current":32}
+{"_e":"metro:bundling:progress","_t":1790265183567,"id":"1","progress":0.5184,"total":75,"current":54}
+{"_e":"metro:bundling:progress","_t":1790265183666,"id":"1","progress":0.776492500735222,"total":101,"current":89}
+{"_e":"metro:bundling:progress","_t":1790265183766,"id":"1","progress":0.8376903188738868,"total":118,"current":108}
+{"_e":"metro:bundling:progress","_t":1790265183867,"id":"1","progress":0.8376903188738868,"total":156,"current":129}
+{"_e":"metro:bundling:progress","_t":1790265183966,"id":"1","progress":0.8376903188738868,"total":227,"current":156}
+{"_e":"metro:bundling:progress","_t":1790265184066,"id":"1","progress":0.8376903188738868,"total":305,"current":204}
+{"_e":"metro:bundling:progress","_t":1790265184166,"id":"1","progress":0.8376903188738868,"total":348,"current":245}
+{"_e":"metro:bundling:progress","_t":1790265184266,"id":"1","progress":0.8376903188738868,"total":376,"current":306}
+{"_e":"metro:bundling:progress","_t":1790265184366,"id":"1","progress":0.8376903188738868,"total":389,"current":331}
+{"_e":"metro:bundling:progress","_t":1790265184466,"id":"1","progress":0.8663655367649991,"total":419,"current":390}
+{"_e":"metro:bundling:progress","_t":1790265184568,"id":"1","progress":0.999,"total":436,"current":436}
+{"_e":"metro:bundling:done","_t":1790265184663,"id":"1","total":436,"ms":2210.590708}
+{"_e":"metro:client_log","_t":1790265184789,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790265184790,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790265184799,"level":"error","data":["[Error: No safe area value available. Make sure you are rendering `<SafeAreaProvider>` at the top of your app.]","useSafeAreaInsets@http://localhost:8081/node_modules/expo/AppEntry.bundle:80245:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:80509:59\nreact_stack_bottom_frame@http://localhost:8081/node_modules/expo/AppEntry.bundle:18950:29\nrenderWithHooks@http://localhost:8081/node_modules/expo/AppEntry.bundle:9823:40\nupdateForwardRef@http://localhost:8081/node_modules/expo/AppEntry.bundle:11041:34\nrunWithFiberInDEV@http://localhost:8081/node_modules/expo/AppEntry.bundle:6300:135\nperformUnitOfWork@http://localhost:8081/node_modules/expo/AppEntry.bundle:14208:112\nworkLoopSync@http://localhost:8081/node_modules/expo/AppEntry.bundle:14103:57\nrenderRootSync@http://localhost:8081/node_modules/expo/AppEntry.bundle:14088:21\nperformWorkOnRoot@http://localhost:8081/node_modules/expo/AppEntry.bundle:13761:49\nperformWorkOnRootViaSchedulerTask@http://localhost:8081/node_modules/expo/AppEntry.bundle:14863:24\nperformWorkUntilDeadline@http://localhost:8081/node_modules/expo/AppEntry.bundle:20802:56","\nwithDevTools(App)@http://localhost:8081/node_modules/expo/AppEntry.bundle:25523:45"]}
+{"_e":"metro:client_log","_t":1790265184800,"level":"warn","data":["An error occurred in the <ForwardRef> component.\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://react.dev/link/error-boundaries to learn more about error boundaries.\n"]}
+{"_e":"metro:bundling:started","_t":1790265188747,"id":"3","platform":"android","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265188747,"id":"3","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790265188750,"id":"3","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790265188850,"id":"3","progress":0.010000000000000002,"total":3,"current":1}
+{"_e":"metro:bundling:progress","_t":1790265188956,"id":"3","progress":0.010000000000000002,"total":119,"current":7}
+{"_e":"metro:bundling:progress","_t":1790265189059,"id":"3","progress":0.028167636559244952,"total":143,"current":24}
+{"_e":"metro:bundling:progress","_t":1790265189162,"id":"3","progress":0.060274660260317685,"total":167,"current":41}
+{"_e":"metro:bundling:progress","_t":1790265189262,"id":"3","progress":0.14021230763259526,"total":227,"current":85}
+{"_e":"metro:bundling:progress","_t":1790265189363,"id":"3","progress":0.28317602040816325,"total":280,"current":149}
+{"_e":"metro:bundling:progress","_t":1790265189463,"id":"3","progress":0.3341240936883959,"total":346,"current":200}
+{"_e":"metro:bundling:progress","_t":1790265189563,"id":"3","progress":0.3341240936883959,"total":477,"current":258}
+{"_e":"metro:bundling:progress","_t":1790265189663,"id":"3","progress":0.38759103090130054,"total":514,"current":320}
+{"_e":"metro:bundling:progress","_t":1790265189764,"id":"3","progress":0.43710848603861635,"total":543,"current":359}
+{"_e":"metro:bundling:progress","_t":1790265189863,"id":"3","progress":0.5788035039594225,"total":556,"current":423}
+{"_e":"metro:bundling:progress","_t":1790265189963,"id":"3","progress":0.6644304780735824,"total":595,"current":485}
+{"_e":"metro:bundling:progress","_t":1790265190063,"id":"3","progress":0.7346938775510203,"total":616,"current":528}
+{"_e":"metro:bundling:progress","_t":1790265190163,"id":"3","progress":0.7682313810941043,"total":672,"current":589}
+{"_e":"metro:bundling:progress","_t":1790265190264,"id":"3","progress":0.8141432157484475,"total":696,"current":628}
+{"_e":"metro:bundling:progress","_t":1790265190364,"id":"3","progress":0.8371879558753627,"total":741,"current":678}
+{"_e":"metro:bundling:progress","_t":1790265190464,"id":"3","progress":0.8940180774879256,"total":771,"current":729}
+{"_e":"metro:bundling:progress","_t":1790265190565,"id":"3","progress":0.9498827591538046,"total":788,"current":768}
+{"_e":"metro:bundling:progress","_t":1790265190668,"id":"3","progress":0.9924765157445519,"total":796,"current":793}
+{"_e":"metro:bundling:progress","_t":1790265190921,"id":"3","progress":0.9949811873437541,"total":796,"current":794}
+{"_e":"metro:bundling:progress","_t":1790265191021,"id":"3","progress":0.9974984375024474,"total":799,"current":798}
+{"_e":"metro:bundling:progress","_t":1790265191124,"id":"3","progress":0.999,"total":799,"current":799}
+{"_e":"metro:bundling:progress","_t":1790265191225,"id":"3","progress":0.999,"total":810,"current":810}
+{"_e":"metro:bundling:done","_t":1790265191352,"id":"3","total":810,"ms":2604.666292}
+{"_e":"metro:bundling:started","_t":1790265229616,"id":"5","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265229616,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790265229640,"id":"5","total":1,"ms":24.253334}
+{"_e":"metro:client_log","_t":1790265229746,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790265229748,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790265229753,"level":"error","data":["[Error: No safe area value available. Make sure you are rendering `<SafeAreaProvider>` at the top of your app.]","useSafeAreaInsets@http://localhost:8081/node_modules/expo/AppEntry.bundle:80245:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:80509:59\nreact_stack_bottom_frame@http://localhost:8081/node_modules/expo/AppEntry.bundle:18950:29\nrenderWithHooks@http://localhost:8081/node_modules/expo/AppEntry.bundle:9823:40\nupdateForwardRef@http://localhost:8081/node_modules/expo/AppEntry.bundle:11041:34\nrunWithFiberInDEV@http://localhost:8081/node_modules/expo/AppEntry.bundle:6300:135\nperformUnitOfWork@http://localhost:8081/node_modules/expo/AppEntry.bundle:14208:112\nworkLoopSync@http://localhost:8081/node_modules/expo/AppEntry.bundle:14103:57\nrenderRootSync@http://localhost:8081/node_modules/expo/AppEntry.bundle:14088:21\nperformWorkOnRoot@http://localhost:8081/node_modules/expo/AppEntry.bundle:13761:49\nperformWorkOnRootViaSchedulerTask@http://localhost:8081/node_modules/expo/AppEntry.bundle:14863:24\nperformWorkUntilDeadline@http://localhost:8081/node_modules/expo/AppEntry.bundle:20802:56","\nwithDevTools(App)@http://localhost:8081/node_modules/expo/AppEntry.bundle:25523:45"]}
+{"_e":"metro:client_log","_t":1790265229753,"level":"warn","data":["An error occurred in the <ForwardRef> component.\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://react.dev/link/error-boundaries to learn more about error boundaries.\n"]}
+{"_e":"metro:bundling:started","_t":1790265241187,"id":"7","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265241187,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790265241196,"id":"7","total":1,"ms":8.809}
+{"_e":"metro:client_log","_t":1790265241271,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790265241272,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790265241276,"level":"error","data":["[Error: No safe area value available. Make sure you are rendering `<SafeAreaProvider>` at the top of your app.]","useSafeAreaInsets@http://localhost:8081/node_modules/expo/AppEntry.bundle:80245:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:80509:59\nreact_stack_bottom_frame@http://localhost:8081/node_modules/expo/AppEntry.bundle:18950:29\nrenderWithHooks@http://localhost:8081/node_modules/expo/AppEntry.bundle:9823:40\nupdateForwardRef@http://localhost:8081/node_modules/expo/AppEntry.bundle:11041:34\nrunWithFiberInDEV@http://localhost:8081/node_modules/expo/AppEntry.bundle:6300:135\nperformUnitOfWork@http://localhost:8081/node_modules/expo/AppEntry.bundle:14208:112\nworkLoopSync@http://localhost:8081/node_modules/expo/AppEntry.bundle:14103:57\nrenderRootSync@http://localhost:8081/node_modules/expo/AppEntry.bundle:14088:21\nperformWorkOnRoot@http://localhost:8081/node_modules/expo/AppEntry.bundle:13761:49\nperformWorkOnRootViaSchedulerTask@http://localhost:8081/node_modules/expo/AppEntry.bundle:14863:24\nperformWorkUntilDeadline@http://localhost:8081/node_modules/expo/AppEntry.bundle:20802:56","\nwithDevTools(App)@http://localhost:8081/node_modules/expo/AppEntry.bundle:25523:45"]}
+{"_e":"metro:client_log","_t":1790265241276,"level":"warn","data":["An error occurred in the <ForwardRef> component.\n\nConsider adding an error boundary to your tree to customize error handling behavior.\nVisit https://react.dev/link/error-boundaries to learn more about error boundaries.\n"]}
+{"_e":"metro:bundling:started","_t":1790265303107,"id":"9","platform":"android","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265303107,"id":"9","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790265303143,"id":"9","total":1,"ms":36.030041}
+{"_e":"metro:client_log","_t":1790265307552,"level":"error","data":["[Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: object. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.\n\nCheck the render method of `withDevTools(Anonymous)`.]"]}
+{"_e":"metro:bundling:started","_t":1790265308455,"id":"c","platform":"android","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265308455,"id":"c","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790265308484,"id":"c","total":1,"ms":28.585375}
+{"_e":"metro:bundling:started","_t":1790265377841,"id":"d","platform":"android","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265377841,"id":"d","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790265377860,"id":"d","total":1,"ms":19.466625}
+{"_e":"metro:bundling:started","_t":1790265390285,"id":"e","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265390285,"id":"e","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790265390287,"id":"e","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790265390489,"id":"e","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790265390499,"id":"e","total":1,"ms":214.149083}
+{"_e":"metro:client_log","_t":1790265390615,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790265390615,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:bundling:started","_t":1790265708892,"id":"g","platform":"android","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265708892,"id":"g","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790265708909,"id":"g","total":1,"ms":16.901292}
+{"_e":"metro:bundling:started","_t":1790265854131,"id":"h","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790265854131,"id":"h","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790265854153,"id":"h","total":1,"ms":22.00375}
+{"_e":"metro:client_log","_t":1790265854588,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790265854588,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"root:init","_t":1790313286715,"format":"v0-jsonl","version":"57.0.27"}
+{"_e":"env:mode","_t":1790313286717,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1790313286731,"mode":"development","files":["../../../.env"],"env":{}}
+{"_e":"devserver:start","_t":1790313290206,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1790313292079,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1790313292964,"plugins":[]}
+{"_e":"metro:instantiate","_t":1790313293469,"atlas":false,"workers":6,"host":"::","port":8083}
+{"_e":"metro:bundling:started","_t":1790313409241,"id":"1","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790313409241,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790313409246,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790313410350,"id":"1","progress":0.010000000000000002,"total":1,"current":1}
+{"_e":"metro:bundling:progress","_t":1790313410450,"id":"1","progress":0.17728531855955676,"total":19,"current":8}
+{"_e":"metro:bundling:progress","_t":1790313410552,"id":"1","progress":0.25,"total":42,"current":21}
+{"_e":"metro:bundling:progress","_t":1790313410653,"id":"1","progress":0.4963842975206612,"total":44,"current":31}
+{"_e":"metro:bundling:progress","_t":1790313410756,"id":"1","progress":0.5289256198347108,"total":44,"current":32}
+{"_e":"metro:bundling:progress","_t":1790313410784,"id":"1","progress":0.5625,"total":44,"current":33}
+{"_e":"metro:bundling:progress","_t":1790313410884,"id":"1","progress":0.5625,"total":70,"current":50}
+{"_e":"metro:bundling:progress","_t":1790313410983,"id":"1","progress":0.773552039483234,"total":83,"current":73}
+{"_e":"metro:bundling:progress","_t":1790313411084,"id":"1","progress":0.87890625,"total":112,"current":105}
+{"_e":"metro:bundling:progress","_t":1790313411190,"id":"1","progress":0.9384765625,"total":128,"current":124}
+{"_e":"metro:bundling:progress","_t":1790313411290,"id":"1","progress":0.9384765625,"total":214,"current":152}
+{"_e":"metro:bundling:progress","_t":1790313411390,"id":"1","progress":0.9384765625,"total":286,"current":200}
+{"_e":"metro:bundling:progress","_t":1790313411490,"id":"1","progress":0.9384765625,"total":337,"current":233}
+{"_e":"metro:bundling:progress","_t":1790313411590,"id":"1","progress":0.9384765625,"total":359,"current":284}
+{"_e":"metro:bundling:progress","_t":1790313411690,"id":"1","progress":0.9384765625,"total":387,"current":321}
+{"_e":"metro:bundling:progress","_t":1790313411790,"id":"1","progress":0.9384765625,"total":409,"current":383}
+{"_e":"metro:bundling:progress","_t":1790313411891,"id":"1","progress":0.999,"total":436,"current":436}
+{"_e":"metro:bundling:done","_t":1790313411977,"id":"1","total":436,"ms":2736.429458}
+{"_e":"metro:client_log","_t":1790313412100,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790313412101,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790313445323,"level":"log","data":["Order sent to backend successfully."]}
+{"_e":"metro:client_log","_t":1790313520214,"level":"log","data":["Order sent to backend successfully."]}
