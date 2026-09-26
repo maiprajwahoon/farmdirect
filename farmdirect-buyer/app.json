@@ -18,14 +18,21 @@
     "android": {
       "package": "com.farmdirect.buyer",
       "permissions": [
-        "CAMERA",
-        "READ_MEDIA_IMAGES"
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "plugins": [
       "expo-camera",
       "expo-image-picker",
       "expo-status-bar"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7b961699-840f-4ebc-8851-a6532a081526"
+      }
+    }
   }
 }

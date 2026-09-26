@@ -1,18 +1,20 @@
 const express = require('express');
 const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// In-memory store for orders
-let orders = [];
+// Initialize Supabase Client
+const supabaseUrl = 'https://xkoewoyrlylsmogkexic.supabase.co';
+const supabaseKey = 'sb_publishable_7Z9aohcBPGOMTAQ2MkuMQQ_JhSlqOMT'; // Public anon key is fine for demo
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-app.post('/api/orders', (req, res) => {
+app.post('/api/orders', async (req, res) => {
   const payload = req.body;
   const orderId = `FD-${Date.now().toString().slice(-7)}`;
   
-  // Create an order matching the structure expected by happy-galileo
   const order = {
     id: orderId,
     orderNumber: orderId,
@@ -36,7 +38,7 @@ app.post('/api/orders', (req, res) => {
     cropName: payload.productName || 'Assorted Vegetables',
     variety: payload.productVariety || 'Regular',
     quantity: payload.quantity || 1,
-    quantityUnit: 'kg', // Or from payload
+    quantityUnit: 'kg',
     pricePerUnit: payload.price || 0,
     totalAmount: payload.total || 0,
     deliveryType: 'delivery',
@@ -51,14 +53,34 @@ app.post('/api/orders', (req, res) => {
     updatedAt: new Date().toISOString(),
   };
 
-  orders.push(order);
-  console.log(`[+] New Order Received: ${order.orderNumber} for ${order.cropName} (${order.totalAmount} INR)`);
-  
-  res.json({ success: true, order });
+  // Insert into Supabase
+  const { data, error } = await supabase
+    .from('orders')
+    .insert([order])
+    .select();
+
+  if (error) {
+    console.error('Error inserting order into Supabase:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+
+  console.log(`[+] New Order Saved to Supabase: ${order.orderNumber}`);
+  res.json({ success: true, order: data[0] || order });
 });
 
-app.get('/api/orders', (req, res) => {
-  res.json({ orders });
+app.get('/api/orders', async (req, res) => {
+  // Fetch from Supabase
+  const { data: orders, error } = await supabase
+    .from('orders')
+    .select('*')
+    .order('createdAt', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching orders from Supabase:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+
+  res.json({ orders: orders || [] });
 });
 
 // A route for testing if the server is up

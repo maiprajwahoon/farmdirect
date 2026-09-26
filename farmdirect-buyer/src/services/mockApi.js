@@ -1,59 +1,152 @@
 import { products } from '../data';
+import { supabase } from './supabase';
+
+import { Platform } from 'react-native';
+
+const API_BASE_URL = Platform.OS === 'web' ? 'http://localhost:3000' : 'http://192.168.0.102:3000';
 
 export const api = {
-  async login(email, password) {
-    await sleep(550);
-    if (!email || !password) throw new Error('Enter email and password.');
-    return { id: 'buyer-demo', name: email.split('@')[0] || 'Buyer', email };
+  async sendOtp(email) {
+    if (!email) throw new Error('Enter email.');
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) throw new Error(error.message);
+    return true;
   },
-  async register(name, email, password) {
-    await sleep(700);
-    if (!name || !email || !password) throw new Error('Fill all required fields.');
-    if (password.length < 6) throw new Error('Password must contain at least 6 characters.');
-    return { id: 'buyer-demo', name, email };
+
+  async verifyOtp(email, otp) {
+    if (!otp) throw new Error('Enter OTP.');
+    const { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token: otp,
+      type: 'email',
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return {
+      id: data.user.id,
+      name: data.user.user_metadata?.name || email.split('@')[0] || 'Buyer',
+      email: data.user.email,
+    };
   },
+
   async searchProducts(query) {
     await sleep(220);
+
     const q = query.trim().toLowerCase();
-    if (!q) return products;
-    return products.filter((p) => [p.name, p.category, p.farmer, p.location].join(' ').toLowerCase().includes(q));
+
+    if (!q) {
+      return products;
+    }
+
+    return products.filter((p) =>
+      [p.name, p.category, p.farmer, p.location]
+        .join(' ')
+        .toLowerCase()
+        .includes(q)
+    );
   },
+
   async checkout(payload) {
     await sleep(900);
-    const localOrder = {
-      ...payload,
-      id: `FD-${Date.now().toString().slice(-7)}`,
-      status: 'Confirmed',
-      date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+
+    const items = payload.items || [];
+
+    if (items.length === 0) {
+      throw new Error('Your cart is empty.');
+    }
+
+    const firstItemProduct = items[0]?.product || items[0] || {};
+    const farmerId = firstItemProduct.farmerId || payload.farmerId || 'demo-farmer-1';
+
+    const serverPayload = {
+      buyerId: payload.buyerId || 'buyer-demo',
+
+      buyerName: payload.buyerName || 'FarmDirect Buyer',
+
+      farmerId: farmerId,
+
+      listingId: payload.listingId || 'listing-001',
+
+      items: items.map((item) => {
+        const prod = item.product || item;
+        return {
+          productId: prod.id || prod.productId || null,
+          productName: prod.name || 'Unknown Product',
+          quantity: Number(item.quantity || item.qty) || 1,
+          price: Number(prod.price) || 0,
+        };
+      }),
+
+      // Preserve the existing checkout total.
+      total: Number(payload.total) || 0,
+
+      address: payload.address || 'Not specified',
+
+      slot: payload.slot || 'Not specified',
+
+      instructions: `Deliver to: ${payload.address || 'Not specified'
+        }, Slot: ${payload.slot || 'Not specified'}`,
     };
 
     try {
-      // Get the first item to pass product details
-      const firstItem = Object.values(payload.items || {})[0] || {};
-      
-      const serverPayload = {
-        buyerName: 'FarmDirect Buyer',
-        productName: firstItem.name || 'Assorted Items',
-        quantity: firstItem.quantity || 1,
-        price: firstItem.price || 0,
-        total: payload.total,
-        instructions: `Deliver to: ${payload.address}, Slot: ${payload.slot}`
+      const response = await fetch(
+        `${API_BASE_URL}/api/orders`,
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type': 'application/json',
+          },
+
+          body: JSON.stringify(serverPayload),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+
+        throw new Error(
+          `Order failed (${response.status}): ${errorText}`
+        );
+      }
+
+      const result = await response.json();
+
+      if (!result.success || !result.order) {
+        throw new Error('Invalid response from backend.');
+      }
+
+      console.log(
+        'Order created successfully:',
+        result.order.orderNumber
+      );
+
+      return {
+        ...result.order,
+
+        date: new Date(
+          result.order.createdAt
+        ).toLocaleDateString('en-IN', {
+          day: '2-digit',
+
+          month: 'short',
+
+          year: 'numeric',
+        }),
       };
-
-      await fetch('http://192.168.0.102:3000/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(serverPayload)
-      });
-      console.log('Order sent to backend successfully.');
     } catch (error) {
-      console.error('Failed to send order to backend:', error);
-    }
+      console.error(
+        'Failed to create order:',
+        error
+      );
 
-    return localOrder;
-  }
+      throw error;
+    }
+  },
 };
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

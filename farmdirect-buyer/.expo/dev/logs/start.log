@@ -128,3 +128,77 @@
 {"_e":"metro:client_log","_t":1790313412101,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
 {"_e":"metro:client_log","_t":1790313445323,"level":"log","data":["Order sent to backend successfully."]}
 {"_e":"metro:client_log","_t":1790313520214,"level":"log","data":["Order sent to backend successfully."]}
+{"_e":"metro:client_log","_t":1790314596777,"level":"log","data":["Order sent to backend successfully."]}
+{"_e":"root:init","_t":1790400317366,"format":"v0-jsonl","version":"57.0.27"}
+{"_e":"env:mode","_t":1790400317367,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1790400317381,"mode":"development","files":["../../../.env"],"env":{}}
+{"_e":"devserver:start","_t":1790400318675,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1790400320364,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1790400321212,"plugins":[]}
+{"_e":"metro:instantiate","_t":1790400321787,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1790400324912,"id":"1","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790400324912,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790400324915,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790400325021,"id":"1","progress":0.7327359999999999,"total":125,"current":107}
+{"_e":"metro:bundling:progress","_t":1790400325122,"id":"1","progress":0.9850189383232516,"total":133,"current":132}
+{"_e":"metro:bundling:progress","_t":1790400325659,"id":"1","progress":0.999,"total":133,"current":133}
+{"_e":"metro:bundling:progress","_t":1790400325760,"id":"1","progress":0.999,"total":404,"current":362}
+{"_e":"metro:bundling:progress","_t":1790400325865,"id":"1","progress":0.999,"total":447,"current":438}
+{"_e":"metro:bundling:progress","_t":1790400325965,"id":"1","progress":0.999,"total":448,"current":439}
+{"_e":"metro:bundling:progress","_t":1790400326067,"id":"1","progress":0.999,"total":450,"current":445}
+{"_e":"metro:bundling:progress","_t":1790400326167,"id":"1","progress":0.999,"total":451,"current":447}
+{"_e":"metro:bundling:progress","_t":1790400326268,"id":"1","progress":0.999,"total":455,"current":451}
+{"_e":"metro:bundling:progress","_t":1790400326320,"id":"1","progress":0.999,"total":455,"current":452}
+{"_e":"metro:bundling:progress","_t":1790400326419,"id":"1","progress":0.999,"total":468,"current":461}
+{"_e":"metro:bundling:progress","_t":1790400326526,"id":"1","progress":0.999,"total":470,"current":465}
+{"_e":"metro:bundling:progress","_t":1790400326627,"id":"1","progress":0.999,"total":481,"current":473}
+{"_e":"metro:bundling:progress","_t":1790400326728,"id":"1","progress":0.999,"total":481,"current":479}
+{"_e":"metro:bundling:done","_t":1790400326832,"id":"1","total":481,"ms":1919.923292}
+{"_e":"metro:client_log","_t":1790400326984,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790400326986,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:bundling:started","_t":1790400502424,"id":"3","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790400502424,"id":"3","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790400502451,"id":"3","total":1,"ms":26.804042}
+{"_e":"metro:client_log","_t":1790400502582,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790400502583,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:bundling:started","_t":1790400646069,"id":"5","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790400646070,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790400646097,"id":"5","total":1,"ms":27.5785}
+{"_e":"metro:client_log","_t":1790400646233,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790400646234,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:bundling:started","_t":1790401684558,"id":"7","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790401684559,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790401684602,"id":"7","total":1,"ms":43.496709}
+{"_e":"metro:client_log","_t":1790401684758,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790401684759,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790407585175,"level":"warn","data":["GoTrueClient@sb-xkoewoyrlylsmogkexic-auth-token:1 (2.117.2) 2026-09-26T07:26:25.169Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key."]}
+{"_e":"metro:client_log","_t":1790407594725,"level":"error","data":["Failed to create order:","[TypeError: Load failed]","captureCurrentStack@http://localhost:8081/node_modules/expo/AppEntry.bundle:1473:29\naddErrorStacks@http://localhost:8081/node_modules/expo/AppEntry.bundle:1455:40\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:1420:72\ncheckout@\n@"]}
+{"_e":"metro:client_log","_t":1790407594727,"level":"error","data":["[TypeError: Load failed]"]}
+{"_e":"metro:bundling:started","_t":1790407823505,"id":"9","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790407823506,"id":"9","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790407823533,"id":"9","total":1,"ms":27.131792}
+{"_e":"metro:client_log","_t":1790407823691,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790407823691,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790407831566,"level":"error","data":["Failed to create order:","[TypeError: Load failed]","captureCurrentStack@http://localhost:8081/node_modules/expo/AppEntry.bundle:1473:29\naddErrorStacks@http://localhost:8081/node_modules/expo/AppEntry.bundle:1455:40\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:1420:72\ncheckout@http://localhost:8081/node_modules/expo/AppEntry.bundle:81041:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:27325:57"]}
+{"_e":"metro:client_log","_t":1790407834149,"level":"error","data":["Failed to create order:","[TypeError: Load failed]","captureCurrentStack@http://localhost:8081/node_modules/expo/AppEntry.bundle:1473:29\naddErrorStacks@http://localhost:8081/node_modules/expo/AppEntry.bundle:1455:40\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:1420:72\ncheckout@http://localhost:8081/node_modules/expo/AppEntry.bundle:81041:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:27325:57"]}
+{"_e":"metro:client_log","_t":1790407835769,"level":"error","data":["Failed to create order:","[TypeError: Load failed]","captureCurrentStack@http://localhost:8081/node_modules/expo/AppEntry.bundle:1473:29\naddErrorStacks@http://localhost:8081/node_modules/expo/AppEntry.bundle:1455:40\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:1420:72\ncheckout@http://localhost:8081/node_modules/expo/AppEntry.bundle:81041:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:27325:57"]}
+{"_e":"metro:client_log","_t":1790407837292,"level":"error","data":["Failed to create order:","[TypeError: Load failed]","captureCurrentStack@http://localhost:8081/node_modules/expo/AppEntry.bundle:1473:29\naddErrorStacks@http://localhost:8081/node_modules/expo/AppEntry.bundle:1455:40\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:1420:72\ncheckout@http://localhost:8081/node_modules/expo/AppEntry.bundle:81041:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:27325:57"]}
+{"_e":"metro:client_log","_t":1790407839077,"level":"error","data":["Failed to create order:","[TypeError: Load failed]","captureCurrentStack@http://localhost:8081/node_modules/expo/AppEntry.bundle:1473:29\naddErrorStacks@http://localhost:8081/node_modules/expo/AppEntry.bundle:1455:40\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:1420:72\ncheckout@http://localhost:8081/node_modules/expo/AppEntry.bundle:81041:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:27325:57"]}
+{"_e":"metro:client_log","_t":1790407840519,"level":"error","data":["Failed to create order:","[TypeError: Load failed]","captureCurrentStack@http://localhost:8081/node_modules/expo/AppEntry.bundle:1473:29\naddErrorStacks@http://localhost:8081/node_modules/expo/AppEntry.bundle:1455:40\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:1420:72\ncheckout@http://localhost:8081/node_modules/expo/AppEntry.bundle:81041:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:27325:57"]}
+{"_e":"metro:client_log","_t":1790407850119,"level":"error","data":["Failed to create order:","[TypeError: Load failed]","captureCurrentStack@http://localhost:8081/node_modules/expo/AppEntry.bundle:1473:29\naddErrorStacks@http://localhost:8081/node_modules/expo/AppEntry.bundle:1455:40\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:1420:72\ncheckout@http://localhost:8081/node_modules/expo/AppEntry.bundle:81041:22\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:27325:57"]}
+{"_e":"metro:client_log","_t":1790407915365,"level":"error","data":["Failed to create order:","[Error: Order failed (500): {\"success\":false,\"error\":\"new row violates row-level security policy for table \\\"orders\\\"\"}]","checkout@\n@"]}
+{"_e":"metro:client_log","_t":1790407943239,"level":"error","data":["Failed to create order:","[Error: Order failed (500): {\"success\":false,\"error\":\"new row violates row-level security policy for table \\\"orders\\\"\"}]","checkout@\n@"]}
+{"_e":"metro:bundling:started","_t":1790407946627,"id":"b","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790407946627,"id":"b","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790407946657,"id":"b","total":1,"ms":30.1375}
+{"_e":"metro:client_log","_t":1790407946805,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790407946805,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790407956122,"level":"error","data":["Failed to create order:","[Error: Order failed (500): {\"success\":false,\"error\":\"new row violates row-level security policy for table \\\"orders\\\"\"}]","checkout@http://localhost:8081/node_modules/expo/AppEntry.bundle:81037:26\n@http://localhost:8081/node_modules/expo/AppEntry.bundle:27325:57"]}
+{"_e":"metro:client_log","_t":1790407991388,"level":"log","data":["Order created successfully:","FD-7991067"]}
+{"_e":"metro:bundling:started","_t":1790408388580,"id":"d","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790408388581,"id":"d","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790408388616,"id":"d","total":1,"ms":35.341917}
+{"_e":"metro:client_log","_t":1790408388757,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790408388758,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790408401906,"level":"log","data":["Order created successfully:","FD-8400790"]}
+{"_e":"metro:client_log","_t":1790408438420,"level":"log","data":["Order created successfully:","FD-8437583"]}

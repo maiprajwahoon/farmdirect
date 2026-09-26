@@ -72,9 +72,14 @@ function Navbar() {
           ))}
         </div>
 
-        <a href="#marketplace" className="btn btn-amber hide-mobile" style={{ marginLeft: 'auto', fontSize: 10, padding: '.45rem 1.1rem' }}>
-          Download App
-        </a>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem' }} className="hide-mobile">
+          <a href="https://expo.dev/accounts/moonknight7005/projects/farmdirect-buyer/builds/f9549c15-c739-4f1d-9d48-10c8be296da1" target="_blank" className="btn btn-solid" style={{ fontSize: 10, padding: '.45rem 1.1rem' }}>
+            User App
+          </a>
+          <a href="https://expo.dev/accounts/moonknight7005/projects/farm-direct/builds/a79876e2-2190-4715-ab0f-9d10f9abe4c4" target="_blank" className="btn btn-amber" style={{ fontSize: 10, padding: '.45rem 1.1rem' }}>
+            Farmer App
+          </a>
+        </div>
         <button className="show-mobile" onClick={() => setOpen(!open)}
           style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--ink-2)', cursor: 'pointer' }}>
           {open ? <Ico.X /> : <Ico.Menu />}
@@ -95,9 +100,14 @@ function Navbar() {
               {l}
             </a>
           ))}
-          <a href="#marketplace" className="btn btn-amber" style={{ alignSelf: 'flex-start', marginTop: '1rem' }}>
-            Download App <Ico.Arrow />
-          </a>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+            <a href="https://expo.dev/accounts/moonknight7005/projects/farmdirect-buyer/builds/f9549c15-c739-4f1d-9d48-10c8be296da1" target="_blank" className="btn btn-solid" style={{ alignSelf: 'flex-start' }}>
+              Download User App <Ico.Arrow />
+            </a>
+            <a href="https://expo.dev/accounts/moonknight7005/projects/farm-direct/builds/a79876e2-2190-4715-ab0f-9d10f9abe4c4" target="_blank" className="btn btn-amber" style={{ alignSelf: 'flex-start' }}>
+              Download Farmer App <Ico.Arrow />
+            </a>
+          </div>
         </div>
       )}
     </>
@@ -871,8 +881,8 @@ function FinalCTA() {
             Discover FarmDirect and experience a more transparent way to shop from farms to home.
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="#marketplace" className="btn btn-solid">Explore FarmDirect <Ico.Arrow /></a>
-            <a href="#ai-scanner"  className="btn btn-amber">Try AI Scanner <Ico.Arrow /></a>
+            <a href="https://expo.dev/accounts/moonknight7005/projects/farmdirect-buyer/builds/f9549c15-c739-4f1d-9d48-10c8be296da1" target="_blank" className="btn btn-solid">Download User App <Ico.Arrow /></a>
+            <a href="https://expo.dev/accounts/moonknight7005/projects/farm-direct/builds/a79876e2-2190-4715-ab0f-9d10f9abe4c4" target="_blank" className="btn btn-amber">Download Farmer App <Ico.Arrow /></a>
           </div>
         </div>
       </div>
