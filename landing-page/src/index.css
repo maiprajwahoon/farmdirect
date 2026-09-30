@@ -250,3 +250,52 @@ h1, h2, h3, h4, h5 {
 /* ─── Responsive helpers ─────────────────────────────────────────────────── */
 @media (max-width: 768px) { .hide-mobile { display: none !important; } }
 @media (min-width: 769px) { .show-mobile { display: none !important; } }
+
+/* ─── Desktop-only (≥1024px) ─────────────────────────────────────────────── */
+@media (max-width: 1023px) { .hide-below-1024 { display: none !important; } }
+
+/* ─── Web App Button ─────────────────────────────────────────────────────── */
+.btn-web-app {
+  font-family: 'Sora', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: .65rem 1.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .3s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 1px solid rgba(235, 172, 85, 0.4);
+  color: var(--amber);
+  background: linear-gradient(145deg, rgba(235, 172, 85, 0.05) 0%, rgba(235, 172, 85, 0.15) 100%);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(235, 172, 85, 0.1);
+  white-space: nowrap;
+}
+
+.btn-web-app::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(235, 172, 85, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-web-app:hover {
+  transform: translateY(-2px);
+  border-color: var(--amber);
+  box-shadow: 0 0 24px rgba(235, 172, 85, 0.4), 0 8px 32px rgba(235, 172, 85, 0.2);
+  color: #fff;
+  background: var(--amber);
+}
+
+.btn-web-app:hover::before {
+  left: 100%;
+}
+

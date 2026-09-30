@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, ActivityIndicator, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../services/supabase';
+import { getApiBaseUrl } from '../services/mockApi';
 import { colors, radius, spacing } from '../theme';
 
 export default function FarmerProductsScreen({ farmer, back, addToCart }) {
@@ -16,6 +17,32 @@ export default function FarmerProductsScreen({ farmer, back, addToCart }) {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setErrorMsg(null);
+
+      // 1. Try fetching from live backend
+      try {
+        const res = await fetch(`${getApiBaseUrl()}/api/products`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json && Array.isArray(json.products) && json.products.length > 0) {
+            const mapped = json.products.map(p => ({
+              id: p.id,
+              product_name: p.name,
+              variety: p.variety,
+              price_per_unit: p.price,
+              unit: p.unit,
+              quantity_available: p.quantity,
+              available: p.available !== false && (p.quantity === undefined || p.quantity > 0),
+              image: p.image,
+            }));
+            setProducts(mapped);
+            setLoading(false);
+            return;
+          }
+        }
+      } catch (err) {}
+
+      // 2. Fallback to Supabase
       const { data, error } = await supabase
         .from('listings')
         .select('*')
@@ -34,11 +61,20 @@ export default function FarmerProductsScreen({ farmer, back, addToCart }) {
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
+      {item.image ? (
+        <View style={styles.cardThumbWrap}>
+          <Image source={{ uri: item.image }} style={styles.cardThumb} />
+          <View style={styles.thumbAiBadge}>
+            <Ionicons name="sparkles" size={8} color="#7C3AED" />
+            <Text style={styles.thumbAiBadgeText}>AI</Text>
+          </View>
+        </View>
+      ) : null}
       <View style={styles.cardInfo}>
         <Text style={styles.productName}>{item.product_name}</Text>
         {item.variety && <Text style={styles.varietyText}>{item.variety}</Text>}
         <Text style={styles.priceText}>₹{item.price_per_unit} / {item.unit}</Text>
-        <Text style={styles.quantityText}>Available: {item.quantity} {item.unit}</Text>
+        <Text style={styles.quantityText}>Available: {item.quantity_available} {item.unit}</Text>
       </View>
       <Pressable 
         style={styles.addButton} 
@@ -50,7 +86,7 @@ export default function FarmerProductsScreen({ farmer, back, addToCart }) {
             farmerId: farmer.id,
             price: Number(item.price_per_unit),
             unit: item.unit,
-            image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&q=80" // Demo fallback
+            image: item.image || "http://localhost:3000/images/tomatoes.jpg"
           };
           addToCart(item.id, 1, cartProduct);
         }}
@@ -148,6 +184,36 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 8,
     elevation: 2,
+  },
+  cardThumbWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: 14,
+    overflow: 'hidden',
+    position: 'relative',
+    marginRight: spacing(3),
+    backgroundColor: '#F3F4F6',
+  },
+  cardThumb: {
+    width: '100%',
+    height: '100%',
+  },
+  thumbAiBadge: {
+    position: 'absolute',
+    bottom: 3,
+    right: 3,
+    backgroundColor: 'rgba(109, 40, 217, 0.88)',
+    borderRadius: 5,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  thumbAiBadgeText: {
+    fontSize: 8,
+    fontWeight: '800',
+    color: '#FFF',
   },
   cardInfo: {
     flex: 1,

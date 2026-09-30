@@ -202,3 +202,84 @@
 {"_e":"metro:client_log","_t":1790408388758,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
 {"_e":"metro:client_log","_t":1790408401906,"level":"log","data":["Order created successfully:","FD-8400790"]}
 {"_e":"metro:client_log","_t":1790408438420,"level":"log","data":["Order created successfully:","FD-8437583"]}
+{"_e":"root:init","_t":1790656151525,"format":"v0-jsonl","version":"57.0.27"}
+{"_e":"env:mode","_t":1790656151527,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1790656151537,"mode":"development","files":["../../../.env"],"env":{}}
+{"_e":"devserver:start","_t":1790656152570,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1790656153521,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1790656153972,"plugins":[]}
+{"_e":"metro:instantiate","_t":1790656154439,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1790656207974,"id":"1","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790656207975,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790656207978,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790656208078,"id":"1","progress":0.1883232467070132,"total":159,"current":69}
+{"_e":"metro:bundling:progress","_t":1790656208178,"id":"1","progress":0.7635819722246485,"total":428,"current":374}
+{"_e":"metro:bundling:done","_t":1790656208227,"id":"1","total":428,"ms":252.978709}
+{"_e":"metro:client_log","_t":1790656208343,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1790656208343,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790656208343,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790656336821,"level":"error","data":["Failed to create order:","[Error: Order failed (500): {\"success\":false,\"error\":\"TypeError: fetch failed\"}]","\n\n"]}
+{"_e":"metro:client_log","_t":1790656476924,"level":"log","data":["Order created successfully:","FD-6476283"]}
+{"_e":"metro:client_log","_t":1790656511607,"level":"log","data":["Order created successfully:","FD-6511214"]}
+{"_e":"metro:bundling:started","_t":1790656922406,"id":"4","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790656922406,"id":"4","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790656922430,"id":"4","total":1,"ms":23.748125}
+{"_e":"metro:client_log","_t":1790656922532,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1790656922532,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790656922532,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:bundling:started","_t":1790657295586,"id":"7","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790657295586,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790657295613,"id":"7","total":1,"ms":27.108083}
+{"_e":"metro:client_log","_t":1790657295745,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1790657295746,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790657295746,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790657336694,"level":"log","data":["Order created successfully:","FD-7336332"]}
+{"_e":"metro:bundling:started","_t":1790698157551,"id":"a","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790698157552,"id":"a","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1790698157573,"id":"a","total":1,"ms":21.482625}
+{"_e":"metro:client_log","_t":1790698157672,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1790698157673,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790698157673,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790698496361,"level":"error","data":["{\"code\": \"PGRST202\", \"details\": \"Searched for the function public.nearby_farmers with parameters radius_km, user_lat, user_lng or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.\", \"hint\": null, \"message\": \"Could not find the function public.nearby_farmers(radius_km, user_lat, user_lng) in the schema cache\"}","\n\n"]}
+{"_e":"metro:client_log","_t":1790698496906,"level":"error","data":["{\"code\": \"PGRST202\", \"details\": \"Searched for the function public.nearby_farmers with parameters radius_km, user_lat, user_lng or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.\", \"hint\": null, \"message\": \"Could not find the function public.nearby_farmers(radius_km, user_lat, user_lng) in the schema cache\"}","\n\n"]}
+{"_e":"metro:client_log","_t":1790698498588,"level":"error","data":["{\"code\": \"PGRST202\", \"details\": \"Searched for the function public.nearby_farmers with parameters radius_km, user_lat, user_lng or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.\", \"hint\": null, \"message\": \"Could not find the function public.nearby_farmers(radius_km, user_lat, user_lng) in the schema cache\"}","\n\n"]}
+{"_e":"metro:client_log","_t":1790698499387,"level":"error","data":["{\"code\": \"PGRST202\", \"details\": \"Searched for the function public.nearby_farmers with parameters radius_km, user_lat, user_lng or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.\", \"hint\": null, \"message\": \"Could not find the function public.nearby_farmers(radius_km, user_lat, user_lng) in the schema cache\"}","\n\n"]}
+{"_e":"metro:client_log","_t":1790698753963,"level":"log","data":["Order created successfully:","FD-8753776"]}
+{"_e":"root:init","_t":1790742349025,"format":"v0-jsonl","version":"57.0.27"}
+{"_e":"env:mode","_t":1790742349027,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1790742349036,"mode":"development","files":["../../../.env"],"env":{}}
+{"_e":"devserver:start","_t":1790742349824,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1790742350672,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1790742351206,"plugins":[]}
+{"_e":"metro:instantiate","_t":1790742352614,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"root:init","_t":1790742432480,"format":"v0-jsonl","version":"57.0.27"}
+{"_e":"env:mode","_t":1790742432481,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1790742432491,"mode":"development","files":["../../../.env"],"env":{}}
+{"_e":"devserver:start","_t":1790742432859,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1790742433132,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1790742433286,"plugins":[]}
+{"_e":"metro:instantiate","_t":1790742433727,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1790742461152,"id":"1","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1790742461152,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790742461155,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1790742461656,"id":"1","progress":0.010000000000000002,"total":1,"current":1}
+{"_e":"metro:bundling:progress","_t":1790742461756,"id":"1","progress":0.23666910153396642,"total":37,"current":18}
+{"_e":"metro:bundling:progress","_t":1790742461856,"id":"1","progress":0.7985513807152557,"total":47,"current":42}
+{"_e":"metro:bundling:progress","_t":1790742462008,"id":"1","progress":0.8370303304662743,"total":47,"current":43}
+{"_e":"metro:bundling:progress","_t":1790742462109,"id":"1","progress":0.8370303304662743,"total":79,"current":68}
+{"_e":"metro:bundling:progress","_t":1790742462208,"id":"1","progress":0.8649000000000001,"total":100,"current":93}
+{"_e":"metro:bundling:progress","_t":1790742462308,"id":"1","progress":0.8649000000000001,"total":133,"current":116}
+{"_e":"metro:bundling:progress","_t":1790742462408,"id":"1","progress":0.9850189383232516,"total":133,"current":132}
+{"_e":"metro:bundling:progress","_t":1790742462473,"id":"1","progress":0.999,"total":133,"current":133}
+{"_e":"metro:bundling:progress","_t":1790742462573,"id":"1","progress":0.999,"total":251,"current":183}
+{"_e":"metro:bundling:progress","_t":1790742462673,"id":"1","progress":0.999,"total":392,"current":268}
+{"_e":"metro:bundling:progress","_t":1790742462773,"id":"1","progress":0.999,"total":474,"current":418}
+{"_e":"metro:bundling:progress","_t":1790742462873,"id":"1","progress":0.999,"total":505,"current":495}
+{"_e":"metro:bundling:done","_t":1790742462981,"id":"1","total":505,"ms":1829.116458}
+{"_e":"metro:client_log","_t":1790742463137,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1790742463137,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1790742469772,"level":"warn","data":["Cannot record touch end without a touch start.\n","Touch End: {\"identifier\":0,\"pageX\":60,\"pageY\":678,\"timestamp\":8676}\n","Touch Bank: []"]}
+{"_e":"metro:client_log","_t":1790742508288,"level":"log","data":["Order created successfully on server:","FD-2508255"]}
+{"_e":"metro:client_log","_t":1790742535072,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1790744509034,"level":"log","data":["Order created successfully on server:","FD-4509013"]}
+{"_e":"metro:client_log","_t":1790745132398,"level":"log","data":["Order created successfully on server:","FD-5132390"]}

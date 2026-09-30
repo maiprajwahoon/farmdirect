@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="expo.modules.webview-57.0.1-sources">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/node_modules/@expo/dom-webview/local-maven-repo/expo/modules/webview/expo.modules.webview/57.0.1/expo.modules.webview-57.0.1-sources.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

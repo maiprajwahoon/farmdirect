@@ -72,7 +72,15 @@ function Navbar() {
           ))}
         </div>
 
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem' }} className="hide-mobile">
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem', alignItems: 'center' }} className="hide-mobile">
+          {/* Web App button — desktop only (≥1024px), premium glowing amber */}
+          <a href="http://localhost:5173" target="_blank" className="btn-web-app hide-below-1024">
+            <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+            </svg>
+            Launch Web App
+          </a>
+          <div style={{ width: 1, height: 18, background: 'rgba(237,231,220,.12)', margin: '0 .25rem' }} className="hide-below-1024" />
           <a href="https://expo.dev/accounts/moonknight7005/projects/farmdirect-buyer/builds/f9549c15-c739-4f1d-9d48-10c8be296da1" target="_blank" className="btn btn-solid" style={{ fontSize: 10, padding: '.45rem 1.1rem' }}>
             User App
           </a>
@@ -883,6 +891,41 @@ function FinalCTA() {
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <a href="https://expo.dev/accounts/moonknight7005/projects/farmdirect-buyer/builds/f9549c15-c739-4f1d-9d48-10c8be296da1" target="_blank" className="btn btn-solid">Download User App <Ico.Arrow /></a>
             <a href="https://expo.dev/accounts/moonknight7005/projects/farm-direct/builds/a79876e2-2190-4715-ab0f-9d10f9abe4c4" target="_blank" className="btn btn-amber">Download Farmer App <Ico.Arrow /></a>
+          </div>
+
+          {/* Desktop Web App CTA — hidden on mobile */}
+          <div className="hide-below-1024" style={{ marginTop: '3.5rem', paddingTop: '2.5rem', borderTop: '1px solid var(--hairline)' }}>
+            <span className="label label-teal" style={{ display: 'block', marginBottom: '1rem' }}>◆ Desktop Experience</span>
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '1.75rem 2rem',
+              background: 'var(--ground-2)',
+              border: '1px solid var(--hairline-strong)',
+              borderRadius: '.875rem',
+              maxWidth: 760,
+              gap: '2rem',
+              flexWrap: 'wrap',
+            }}>
+              <div>
+                <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-.025em', marginBottom: '.5rem' }}>
+                  Farmer Dashboard · Web
+                </h3>
+                <p style={{ color: 'var(--ink-2)', fontSize: '14px', lineHeight: 1.65, maxWidth: 420 }}>
+                  Manage your crops, listings, orders and market data from any desktop browser.
+                  Full-featured dashboard — no app install required.
+                </p>
+                <div style={{ display: 'flex', gap: '1.5rem', marginTop: '.875rem', flexWrap: 'wrap' }}>
+                  {['Dashboard', 'Crop Tracking', 'Order Management', 'Market Prices'].map((f, i) => (
+                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '.35rem', fontSize: '12px', color: 'var(--ink-2)' }}>
+                      <span style={{ color: 'var(--teal)', fontSize: 8 }}>◆</span>{f}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <a href="http://localhost:5173" target="_blank" className="btn-web-app" style={{ flexShrink: 0, padding: '.75rem 1.75rem', fontSize: 11 }}>
+                Launch Web App <Ico.Arrow s={13} />
+              </a>
+            </div>
           </div>
         </div>
       </div>
