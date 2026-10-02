@@ -17,7 +17,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // ==========================================
 // PRODUCT CATALOG PERSISTENCE & SYNC
 // ==========================================
-const PRODUCTS_FILE = path.join(__dirname, 'products.json');
+const PRODUCTS_FILE = process.env.VERCEL ? path.join('/tmp', 'products.json') : path.join(__dirname, 'products.json');
 
 function detectCategory(name) {
   const n = (name || '').toLowerCase();
@@ -29,16 +29,16 @@ function detectCategory(name) {
 
 function getImageForCrop(name) {
   const n = (name || '').toLowerCase();
-  if (n.includes('tomato')) return 'http://localhost:3000/images/tomatoes.jpg';
-  if (n.includes('potato') || n.includes('aloo')) return 'http://localhost:3000/images/potatoes.jpg';
-  if (n.includes('capsicum') || n.includes('pepper') || n.includes('shimla') || n.includes('chilli') || n.includes('mirchi')) return 'http://localhost:3000/images/capsicum.jpg';
-  if (n.includes('spinach') || n.includes('palak') || n.includes('methi') || n.includes('leaf') || n.includes('coriander')) return 'http://localhost:3000/images/spinach.jpg';
-  if (n.includes('onion') || n.includes('pyaz')) return 'http://localhost:3000/images/onions.jpg';
-  if (n.includes('carrot') || n.includes('gajar') || n.includes('radish') || n.includes('beet')) return 'http://localhost:3000/images/carrots.jpg';
-  if (n.includes('banana') || n.includes('kela')) return 'http://localhost:3000/images/bananas.jpg';
-  if (n.includes('mango') || n.includes('aam')) return 'http://localhost:3000/images/mangoes.jpg';
-  if (n.includes('guava') || n.includes('amrud')) return 'http://localhost:3000/images/guava.jpg';
-  return 'http://localhost:3000/images/tomatoes.jpg';
+  if (n.includes('tomato')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/tomatoes.jpg';
+  if (n.includes('potato') || n.includes('aloo')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/potatoes.jpg';
+  if (n.includes('capsicum') || n.includes('pepper') || n.includes('shimla') || n.includes('chilli') || n.includes('mirchi')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/capsicum.jpg';
+  if (n.includes('spinach') || n.includes('palak') || n.includes('methi') || n.includes('leaf') || n.includes('coriander')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/spinach.jpg';
+  if (n.includes('onion') || n.includes('pyaz')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/onions.jpg';
+  if (n.includes('carrot') || n.includes('gajar') || n.includes('radish') || n.includes('beet')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/carrots.jpg';
+  if (n.includes('banana') || n.includes('kela')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/bananas.jpg';
+  if (n.includes('mango') || n.includes('aam')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/mangoes.jpg';
+  if (n.includes('guava') || n.includes('amrud')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/guava.jpg';
+  return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/tomatoes.jpg';
 }
 
 const defaultProducts = [
@@ -46,7 +46,7 @@ const defaultProducts = [
     id: 'p1', name: 'Fresh Tomatoes', variety: 'Pusa Ruby', category: 'Vegetables', unit: 'kg', price: 58, farmer: 'Green Valley Farm', location: 'Ozar, Nashik', quality: 'Verified', harvest: 'Today',
     quantity: 350,
     description: 'Firm red tomatoes sourced directly from our farm. Great for curries, salads and everyday cooking.',
-    image: 'http://localhost:3000/images/tomatoes.jpg',
+    image: (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/tomatoes.jpg',
     isAiGenerated: true,
     available: true,
   },
@@ -54,7 +54,7 @@ const defaultProducts = [
     id: 'p2', name: 'Farm Potatoes', variety: 'Kufri Jyoti', category: 'Root Vegetables', unit: 'kg', price: 42, farmer: 'Green Valley Farm', location: 'Ozar, Nashik', quality: 'Verified', harvest: 'Today',
     quantity: 500,
     description: 'Everyday cooking potatoes with a natural earthy finish and reliable availability.',
-    image: 'http://localhost:3000/images/potatoes.jpg',
+    image: (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/potatoes.jpg',
     isAiGenerated: true,
     available: true,
   },
@@ -62,7 +62,7 @@ const defaultProducts = [
     id: 'p3', name: 'Green Capsicum', variety: 'California Wonder', category: 'Vegetables', unit: 'kg', price: 78, farmer: 'Green Valley Farm', location: 'Ozar, Nashik', quality: 'Verified', harvest: 'Today',
     quantity: 140,
     description: 'Crunchy green capsicum supplied directly by Green Valley Farm. Great for stir-fries and stuffed dishes.',
-    image: 'http://localhost:3000/images/capsicum.jpg',
+    image: (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/capsicum.jpg',
     isAiGenerated: true,
     available: true,
   },
@@ -70,7 +70,7 @@ const defaultProducts = [
     id: 'p4', name: 'Fresh Spinach', variety: 'All Rounder Palak', category: 'Leafy Greens', unit: 'bundle', price: 28, farmer: 'Green Valley Farm', location: 'Ozar, Nashik', quality: 'Verified', harvest: 'Today',
     quantity: 90,
     description: 'Fresh leafy greens picked close to dispatch. Availability can change quickly by harvest.',
-    image: 'http://localhost:3000/images/spinach.jpg',
+    image: (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/spinach.jpg',
     isAiGenerated: true,
     available: true,
   },
@@ -78,7 +78,7 @@ const defaultProducts = [
     id: 'p5', name: 'Red Onions', variety: 'Nashik Special', category: 'Vegetables', unit: 'kg', price: 49, farmer: 'Green Valley Farm', location: 'Ozar, Nashik', quality: 'Verified', harvest: 'Today',
     quantity: 600,
     description: 'Red onions with a balanced bite for everyday cooking and fresh salads.',
-    image: 'http://localhost:3000/images/onions.jpg',
+    image: (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/onions.jpg',
     isAiGenerated: true,
     available: true,
   },
@@ -86,7 +86,7 @@ const defaultProducts = [
     id: 'p6', name: 'Fresh Carrots', variety: 'Pusa Kesar', category: 'Root Vegetables', unit: 'kg', price: 62, farmer: 'Green Valley Farm', location: 'Ozar, Nashik', quality: 'Verified', harvest: 'Today',
     quantity: 180,
     description: 'Fresh carrots with a crisp texture. Seller details and visual quality information are shown transparently.',
-    image: 'http://localhost:3000/images/carrots.jpg',
+    image: (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/carrots.jpg',
     isAiGenerated: true,
     available: true,
   },
@@ -94,7 +94,7 @@ const defaultProducts = [
     id: 'p7', name: 'Bananas', variety: 'Robusta', category: 'Fruits', unit: 'dozen', price: 70, farmer: 'Green Valley Farm', location: 'Ozar, Nashik', quality: 'Verified', harvest: 'Today',
     quantity: 150,
     description: 'Naturally ripening bananas supplied directly by our local farm orchard.',
-    image: 'http://localhost:3000/images/bananas.jpg',
+    image: (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/bananas.jpg',
     isAiGenerated: true,
     available: true,
   },
@@ -102,7 +102,7 @@ const defaultProducts = [
     id: 'p8', name: 'Seasonal Guava', variety: 'Allahabad Safeda', category: 'Seasonal Picks', unit: 'kg', price: 76, farmer: 'Green Valley Farm', location: 'Ozar, Nashik', quality: 'Verified', harvest: 'Today',
     quantity: 90,
     description: 'Seasonal guava selection. Freshly picked from Green Valley Farm.',
-    image: 'http://localhost:3000/images/guava.jpg',
+    image: (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/guava.jpg',
     isAiGenerated: true,
     available: true,
   },
@@ -135,7 +135,7 @@ function saveCatalog() {
 // ==========================================
 // ORDERS PERSISTENCE & SYNC (TWO-WAY BUYER & FARMER)
 // ==========================================
-const ORDERS_FILE = path.join(__dirname, 'orders.json');
+const ORDERS_FILE = process.env.VERCEL ? path.join('/tmp', 'orders.json') : path.join(__dirname, 'orders.json');
 
 function loadLocalOrders() {
   if (fs.existsSync(ORDERS_FILE)) {
@@ -927,8 +927,11 @@ app.post('/api/scan', (req, res) => {
   res.json({ success: true, result });
 });
 
-const PORT = 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`FarmDirect Integration Server running on http://0.0.0.0:${PORT}`);
-  console.log(`Waiting for orders from the buyer app & syncing products with farmer app...`);
-});
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const PORT = 3000;
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`FarmDirect Integration Server running on http://0.0.0.0:${PORT}`);
+  });
+}
+
+module.exports = app;

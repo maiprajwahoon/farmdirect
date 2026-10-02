@@ -74,7 +74,7 @@ function Navbar() {
 
         <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem', alignItems: 'center' }} className="hide-mobile">
           {/* Web App button — desktop only (≥1024px), premium glowing amber */}
-          <a href="http://localhost:5173" target="_blank" className="btn-web-app hide-below-1024">
+          <a href="https://farmdirect-webapp.vercel.app" target="_blank" className="btn-web-app hide-below-1024">
             <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
               <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
             </svg>
@@ -922,7 +922,7 @@ function FinalCTA() {
                   ))}
                 </div>
               </div>
-              <a href="http://localhost:5173" target="_blank" className="btn-web-app" style={{ flexShrink: 0, padding: '.75rem 1.75rem', fontSize: 11 }}>
+              <a href="https://farmdirect-webapp.vercel.app" target="_blank" className="btn-web-app" style={{ flexShrink: 0, padding: '.75rem 1.75rem', fontSize: 11 }}>
                 Launch Web App <Ico.Arrow s={13} />
               </a>
             </div>
