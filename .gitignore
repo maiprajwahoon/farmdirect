@@ -1,5 +1,6 @@
 .vercel
 node_modules/
 .env*
-node_modules/
-.env*
+.expo/
+mock-android-sdk/
+.DS_Store

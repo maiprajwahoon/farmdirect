@@ -1014,18 +1014,18 @@ function Scanner({ go, back, products, addToCart }) {
     return () => anim && anim.stop();
   }, [cameraOn, processing]);
 
-  const runAnalysis = async (imgUri, hint = '') => {
+  const runAnalysis = async (imgUri, hint = '', base64 = null) => {
     setImage(imgUri);
     setCameraOn(false);
     setProcessing(true);
     setResult(null);
 
-    setProcStep('Scanning produce surface & color...');
-    const t1 = setTimeout(() => setProcStep('Inspecting skin blemishes & firmness...'), 500);
-    const t2 = setTimeout(() => setProcStep('Calculating ripeness index & grade...'), 1000);
+    setProcStep('Scanning produce surface & identifying crop...');
+    const t1 = setTimeout(() => setProcStep('Analyzing visible quality & defects...'), 500);
+    const t2 = setTimeout(() => setProcStep('Evaluating freshness & market pricing...'), 1000);
 
     try {
-      const res = await api.scanProduce(imgUri, hint);
+      const res = await api.scanProduce(imgUri, hint, base64);
       setResult(res);
     } catch (e) {
       Alert.alert('Scan Analysis Notice', 'Using local high-precision produce analyzer.');
@@ -1039,9 +1039,9 @@ function Scanner({ go, back, products, addToCart }) {
   const capture = async () => {
     if (!cameraRef.current) return;
     try {
-      const photo = await cameraRef.current.takePictureAsync({ quality: 0.8 });
+      const photo = await cameraRef.current.takePictureAsync({ quality: 0.6, base64: true });
       if (photo?.uri) {
-        await runAnalysis(photo.uri);
+        await runAnalysis(photo.uri, '', photo.base64);
       }
     } catch (e) {
       Alert.alert('Capture Error', 'Could not take photo from camera.');
@@ -1052,20 +1052,26 @@ function Scanner({ go, back, products, addToCart }) {
     try {
       const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
-        quality: 0.8,
+        quality: 0.6,
+        base64: true,
         allowsEditing: true,
       });
       if (!res.canceled && res.assets?.[0]?.uri) {
-        const uri = res.assets[0].uri;
+        const asset = res.assets[0];
+        const uri = asset.uri;
         let hint = '';
         const lower = uri.toLowerCase();
-        if (lower.includes('tomato')) hint = 'tomato';
+        if (lower.includes('tomato') || lower.includes('tamatar')) hint = 'tomato';
         else if (lower.includes('spinach') || lower.includes('palak')) hint = 'spinach';
         else if (lower.includes('capsicum') || lower.includes('pepper')) hint = 'capsicum';
-        else if (lower.includes('potato')) hint = 'potato';
-        else if (lower.includes('onion')) hint = 'onion';
-        else if (lower.includes('carrot')) hint = 'carrot';
-        await runAnalysis(uri, hint);
+        else if (lower.includes('potato') || lower.includes('aloo')) hint = 'potato';
+        else if (lower.includes('onion') || lower.includes('pyaz')) hint = 'onion';
+        else if (lower.includes('carrot') || lower.includes('gajar')) hint = 'carrot';
+        else if (lower.includes('banana') || lower.includes('kela')) hint = 'banana';
+        else if (lower.includes('guava') || lower.includes('amrud')) hint = 'guava';
+        else if (lower.includes('mango') || lower.includes('aam')) hint = 'mango';
+        else if (lower.includes('cucumber') || lower.includes('kheera')) hint = 'cucumber';
+        await runAnalysis(uri, hint, asset.base64);
       }
     } catch (e) {
       Alert.alert('Upload Error', 'Could not open photo library.');

@@ -474,10 +474,59 @@ app.put('/api/orders/:id', async (req, res) => {
 });
 
 app.patch('/api/orders/:id', async (req, res) => {
-  // Delegate to PUT handler
-  req.method = 'PUT';
-  app._router.handle(req, res);
+  const { id } = req.params;
+  const { status, note } = req.body || {};
+
+  const localList = loadLocalOrders();
+  let order = localList.find(o => o.id === id || o.orderNumber === id);
+
+  if (!order) {
+    // Try fetching from Supabase
+    try {
+      const { data } = await supabase.from('orders').select('*').eq('id', id).single();
+      if (data) order = data;
+    } catch (e) {}
+  }
+
+  if (!order) {
+    return res.status(404).json({ success: false, error: 'Order not found' });
+  }
+
+  if (status) {
+    order.status = status;
+    const history = Array.isArray(order.statusHistory) ? order.statusHistory : [];
+    history.push({
+      status,
+      timestamp: new Date().toISOString(),
+      note: note || `Order updated to ${status}`,
+    });
+    order.statusHistory = history;
+    order.updatedAt = new Date().toISOString();
+  }
+
+  // Save to local
+  const existingIdx = localList.findIndex(o => o.id === order.id || o.orderNumber === order.id);
+  if (existingIdx >= 0) {
+    localList[existingIdx] = order;
+  } else {
+    localList.unshift(order);
+  }
+  saveLocalOrders(localList);
+
+  // Sync to Supabase
+  try {
+    await supabase.from('orders').update({
+      status: order.status,
+      statusHistory: order.statusHistory,
+      updatedAt: order.updatedAt,
+    }).eq('id', order.id);
+  } catch (e) {}
+
+  const formatted = formatOrder(order);
+  console.log(`[+] Order ${order.id} status updated to: ${order.status} (via PATCH)`);
+  res.json({ success: true, order: formatted });
 });
+
 
 // ==========================================
 // PRODUCT CATALOG ROUTES (SYNC FARMER & BUYER)
@@ -565,54 +614,7 @@ app.post('/api/products', async (req, res) => {
 
   saveCatalog();
   
-  // Sync to Supabase
-  try {
-    const supabasePayload = {
-      farmer_id: '11111111-1111-1111-1111-111111111111',
-      product_name: formatted.name,
-      variety: formatted.variety,
-      price_per_unit: formatted.price,
-      unit: formatted.unit,
-      quantity_available: formatted.quantity,
-      is_organic: formatted.category === 'Organic Produce',
-      available: formatted.available,
-      category: formatted.category,
-      farmer: formatted.farmer,
-      location: formatted.location,
-      quality: formatted.quality,
-      harvest: formatted.harvest,
-      description: formatted.description,
-      image: formatted.image
-    };
-    // if id is uuid update, else insert (or just let supabase assign uuid)
-    let res;
-    if (existingIdx >= 0 && catalog[existingIdx].id.length === 36) {
-      res = await supabase.from('listings').update(supabasePayload).eq('id', catalog[existingIdx].id);
-    } else {
-      res = await supabase.from('listings').insert([supabasePayload]);
-    }
-    
-    if (res.error) {
-      console.warn('Rich sync failed, retrying with minimal schema:', res.error.message);
-      const minimalPayload = {
-        farmer_id: '11111111-1111-1111-1111-111111111111',
-        product_name: formatted.name,
-        variety: formatted.variety,
-        price_per_unit: formatted.price,
-        unit: formatted.unit,
-        quantity_available: formatted.quantity,
-        is_organic: formatted.category === 'Organic Produce',
-        available: formatted.available
-      };
-      if (existingIdx >= 0 && catalog[existingIdx].id.length === 36) {
-        await supabase.from('listings').update(minimalPayload).eq('id', catalog[existingIdx].id);
-      } else {
-        await supabase.from('listings').insert([minimalPayload]);
-      }
-    }
-  } catch (e) {
-    console.warn('Supabase product sync failed:', e.message);
-  }
+  // Supabase direct sync is handled by the frontends because this backend anon key is blocked by listings RLS.
   
   console.log(`[+] Product Catalog updated: ${formatted.name} (₹${formatted.price}/${formatted.unit}, Stock: ${formatted.quantity})`);
   res.json({ success: true, product: formatted, products: catalog });
@@ -640,31 +642,7 @@ app.put('/api/products/:id', async (req, res) => {
 
   saveCatalog();
   
-  // Sync to Supabase
-  try {
-    if (item.id.length === 36) {
-      const res = await supabase.from('listings').update({
-        price_per_unit: item.price,
-        quantity_available: item.quantity,
-        available: item.available,
-        product_name: item.name,
-        variety: item.variety
-      }).eq('id', item.id);
-      
-      if (res.error) {
-         console.warn('Rich sync failed in PUT, retrying with minimal schema:', res.error.message);
-         await supabase.from('listings').update({
-           price_per_unit: item.price,
-           quantity_available: item.quantity,
-           available: item.available,
-           product_name: item.name,
-           variety: item.variety
-         }).eq('id', item.id);
-      }
-    }
-  } catch (e) {
-    console.warn('Supabase product sync failed:', e.message);
-  }
+  // Supabase direct sync is handled by the frontends because this backend anon key is blocked by listings RLS.
   
   console.log(`[+] Product ${item.name} updated: Stock=${item.quantity}, Price=₹${item.price}, Available=${item.available}`);
   res.json({ success: true, product: item, products: catalog });
@@ -1038,39 +1016,42 @@ app.post('/api/scan', async (req, res) => {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
   // ── Try live Gemini analysis first ─────────────────────────────────────────
-  if (GEMINI_API_KEY && cropHint) {
+  if (GEMINI_API_KEY && (cropHint || image)) {
     try {
       const prompt = `You are an expert agricultural quality inspector for Indian farm produce.
-Analyze the crop: "${cropHint}"
+Analyze the provided image and/or crop hint: "${cropHint || ''}".
 Role requesting analysis: ${role || 'general'}
 
-Return a JSON object ONLY (no markdown, no explanation) with this exact structure:
+IMPORTANT:
+- Do NOT assume the produce is tomato.
+- Identify the actual vegetable, fruit, or farm produce visible.
+- Return ONLY valid JSON (no markdown fences, no explanation) with this exact structure:
 {
-  "cropName": "<proper name of the crop>",
+  "cropName": "<proper name of the crop, e.g. Red Onions, Fresh Potatoes, Spinach, etc.>",
   "variety": "<common Indian variety or 'Local Variety'>",
   "category": "<Vegetables|Fruits|Leafy Greens|Grains|Spices>",
   "grade": "<Grade A|Grade B|Grade C>",
-  "qualityScore": <integer 60-98>,
-  "confidence": <float 0.75-0.99>,
+  "qualityScore": 92,
+  "confidence": 0.95,
   "ripeness": {
     "level": "<ripeness description>",
-    "percentage": <integer 60-100>,
+    "percentage": 92,
     "harvestWindow": "<e.g. Ready now / Ready in 2-3 days>"
   },
   "observations": [
-    "<observation 1>",
-    "<observation 2>",
-    "<observation 3>",
-    "<observation 4>"
+    "<detailed visual observation 1>",
+    "<detailed visual observation 2>",
+    "<detailed visual observation 3>",
+    "<detailed visual observation 4>"
   ],
   "defects": ["<any minor defect or 'No significant defects observed'>"],
   "metrics": {
-    "surfaceGloss": "<percentage and description>",
-    "colorUniformity": "<percentage and description>",
-    "firmnessScore": "<percentage and description>",
-    "blemishFreeRatio": "<percentage>"
+    "surfaceGloss": "90%",
+    "colorUniformity": "93%",
+    "firmnessScore": "89%",
+    "blemishFreeRatio": "96%"
   },
-  "shelfLifeDays": <integer 2-14>,
+  "shelfLifeDays": 5,
   "buyerInsights": {
     "bestUse": "<cooking uses or consumption suggestions>",
     "storageTip": "<storage advice>",
@@ -1078,13 +1059,24 @@ Return a JSON object ONLY (no markdown, no explanation) with this exact structur
     "matchedProductId": ""
   },
   "farmerInsights": {
-    "recommendedMandiPrice": <integer, typical Indian mandi price per kg in INR>,
-    "recommendedDirectPrice": <integer, recommended direct-to-buyer price per kg in INR>,
-    "directProfitAdvantage": "<e.g. +60% direct margin>",
-    "marketDemand": "<Low|Moderate|High|Very High>",
+    "recommendedMandiPrice": 35,
+    "recommendedDirectPrice": 58,
+    "directProfitAdvantage": "+65% direct margin",
+    "marketDemand": "High Demand",
     "gradingRationale": "<brief grading reason>"
   }
 }`;
+
+      const parts = [{ text: prompt }];
+      if (image && typeof image === 'string' && (image.startsWith('data:image/') || image.length > 200)) {
+        const cleanBase64 = image.replace(/^data:image\/[a-z]+;base64,/i, '').trim();
+        parts.push({
+          inline_data: {
+            mime_type: 'image/jpeg',
+            data: cleanBase64,
+          },
+        });
+      }
 
       const geminiRes = await fetch(
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
@@ -1095,7 +1087,7 @@ Return a JSON object ONLY (no markdown, no explanation) with this exact structur
             'X-goog-api-key': GEMINI_API_KEY,
           },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
+            contents: [{ parts }],
           }),
         }
       );
