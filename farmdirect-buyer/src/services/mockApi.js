@@ -104,51 +104,35 @@ export const api = {
 
   async searchProducts(query) {
     const q = (query || '').trim().toLowerCase();
-    let results = [];
-    
     try {
-      // 1. Try fetching from local backend first to get rich catalog (images, descriptions) synced with Farmer App
-      let backendUrl = 'http://localhost:3000/api/products';
-      if (Platform.OS === 'android') backendUrl = 'http://10.0.2.2:3000/api/products';
+      const { data, error } = await supabase.from('listings').select('*').eq('available', true);
+      if (error) throw error;
       
-      const res = await fetch(backendUrl).catch(() => null);
-      if (res && res.ok) {
-        const json = await res.json();
-        if (json.success && json.products) {
-          results = json.products;
-        }
-      }
-      
-      // 2. Fallback to Supabase listings table if backend is unreachable
-      if (results.length === 0) {
-        const { data, error } = await supabase.from('listings').select('*');
-        if (error) throw error;
-        
-        results = data.map(p => ({
-          id: p.id,
-          name: p.product_name,
-          category: p.category || (p.is_organic ? 'Organic Produce' : 'Vegetables'),
-          variety: p.variety,
-          unit: p.unit || 'kg',
-          price: p.price_per_unit || 0,
-          farmer: p.farmer || 'Farmer', 
-          location: p.location || 'Local',
-          quality: p.quality || 'Verified',
-          harvest: p.harvest || 'Recent',
-          description: p.description || '',
-          image: p.image || resolveLocalImage(p.product_name),
-          quantity: p.quantity_available
-        }));
-      }
+      let results = data.map(p => ({
+        id: p.id,
+        name: p.crop_name || p.product_name || p.name || 'Unknown',
+        category: p.category || (p.is_organic ? 'Organic Produce' : 'Vegetables'),
+        variety: p.variety || 'Standard',
+        unit: p.quantity_unit || p.unit || 'kg',
+        price: p.price_per_unit || p.price || 0,
+        farmer: p.farmer || 'Farmer', 
+        location: p.location || 'Local',
+        quality: p.quality_grade || p.quality || 'Verified',
+        harvest: p.harvest || 'Recently',
+        description: p.description || `Fresh ${p.crop_name || p.product_name || p.name} sourced directly from our farm.`,
+        image: p.image || resolveLocalImage(p.crop_name || p.product_name || p.name),
+        quantity: p.quantity_available || p.quantity || 0,
+        isAiGenerated: false,
+        available: p.available !== false
+      }));
 
-      if (!q) return results;
-
-      return results.filter((p) =>
-        [p.name, p.category, p.farmer, p.location]
-          .join(' ')
-          .toLowerCase()
-          .includes(q)
-      );
+      if (q) {
+        results = results.filter(p => 
+          p.name.toLowerCase().includes(q) || 
+          (p.category && p.category.toLowerCase().includes(q))
+        );
+      }
+      return results;
     } catch (e) {
       console.warn('searchProducts error:', e);
       return [];
@@ -170,10 +154,14 @@ export const api = {
 
     const serverPayload = {
       id: orderNumber,
-      orderNumber,
-      buyerId: payload.buyerId || 'buyer-demo',
-      farmerId: farmerId,
-      listingId: firstItemProduct.id || payload.listingId || 'listing-001',
+      buyerId: payload.buyerId || '11111111-1111-1111-1111-111111111111',
+      farmerId: farmerId?.includes('-') ? farmerId : '11111111-1111-1111-1111-111111111111',
+      cropName: firstItemProduct.name || firstItemProduct.cropName || 'Order Items',
+      quantity: firstItemProduct.quantity || 1,
+      quantityUnit: firstItemProduct.unit || 'unit',
+      pricePerUnit: firstItemProduct.price || 0,
+      totalAmount: payload.total || 0,
+      status: 'new',
       buyer: {
         id: payload.buyerId || 'buyer-demo',
         name: payload.buyerName || 'Sunita Patil',
@@ -185,27 +173,15 @@ export const api = {
           const prod = item.product || item;
           return {
             productId: prod.id || prod.productId || null,
-            productName: prod.name || 'Unknown Product',
-            variety: prod.variety || '',
-            quantity: Number(item.quantity_available || item.quantity || item.qty) || 1,
+            productName: prod.name || prod.crop_name || 'Unknown Product',
+            variety: prod.variety || 'Standard',
+            quantity: item.cartQty || 1,
             unit: prod.unit || 'kg',
-            price: Number(prod.price) || 0,
-            image: prod.image || '',
+            price: prod.price || 0,
+            image: prod.image || 'https://placehold.co/600x400/eeeeee/999999?text=Produce'
           };
-        })
-      },
-      cropName: firstItemProduct.name || 'Assorted Vegetables',
-      variety: firstItemProduct.variety || 'Regular',
-      quantity: Number(items[0]?.quantity_available || items[0]?.quantity || items[0]?.qty) || 1,
-      quantityUnit: firstItemProduct.unit || 'kg',
-      pricePerUnit: Number(firstItemProduct.price) || 0,
-      totalAmount: Number(payload.total) || 0,
-      deliveryType: 'delivery',
-      status: 'new',
-      statusHistory: [{ status: 'new', timestamp: new Date().toISOString() }],
-      buyerInstructions: `Deliver to: ${payload.address || 'Not specified'}, Slot: ${payload.slot || 'Not specified'}`,
-      paymentStatus: 'pending',
-      photos: []
+        }),
+      }
     };
 
     try {
@@ -251,30 +227,40 @@ export const api = {
 
   async getOrders() {
     try {
-      // 1. Try fetching from backend first for normalized orders
-      let backendUrl = 'http://localhost:3000/api/orders';
-      if (Platform.OS === 'android') backendUrl = 'http://10.0.2.2:3000/api/orders';
-      
-      const res = await fetch(backendUrl).catch(() => null);
-      if (res && res.ok) {
-        const json = await res.json();
-        if (json.success && json.orders) {
-          // Filter to just this user's orders if needed, but for now return all
-          return json.orders;
-        }
-      }
-
-      // 2. Fallback to Supabase
       const { data, error } = await supabase.from('orders').select('*');
       if (!error && data) {
-        return data.map(o => ({
-          ...o,
-          total: Number(o.total || o.totalAmount || 0),
-          items: o.items || (o.buyer && o.buyer.items) || [],
-        }));
+        return data.map(o => {
+          let parsedBuyer = o.buyer;
+          if (typeof parsedBuyer === 'string') {
+            try { parsedBuyer = JSON.parse(parsedBuyer); } catch(e) { parsedBuyer = {}; }
+          }
+          return {
+            id: o.id,
+            orderNumber: (o.id || 'FD-123').split('-')[0],
+            buyerId: o.buyerId || o.buyerId,
+            farmerId: o.farmerId || o.farmerId,
+            status: o.status,
+            cropName: o.cropName || 'Order Items',
+            quantity: o.quantity || 1,
+            quantityUnit: o.quantityUnit || 'unit',
+            pricePerUnit: o.pricePerUnit || 0,
+            totalAmount: o.totalAmount || o.totalAmount || 0,
+            total: Number(o.totalAmount || o.totalAmount || 0),
+            buyer: parsedBuyer || {},
+            items: (parsedBuyer && parsedBuyer.items) || o.items || [{
+              productId: 'local', productName: o.cropName || 'Item', quantity: o.quantity || 1, unit: o.quantityUnit || 'unit', price: o.pricePerUnit || 0, image: 'https://placehold.co/600x400/eeeeee/999999?text=Produce'
+            }],
+            createdAt: o.createdAt || new Date().toISOString(),
+            date: new Date(o.createdAt || Date.now()).toLocaleDateString('en-IN', {
+              day: '2-digit', month: 'short', year: 'numeric',
+            }),
+          };
+        });
       }
-    } catch (e) {}
-    return null;
+    } catch (e) {
+      console.warn('getOrders error:', e);
+    }
+    return [];
   },
 
   async scanProduce(imageUri, cropHint = '') {

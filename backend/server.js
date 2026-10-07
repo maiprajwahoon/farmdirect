@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
+const { GoogleGenAI } = require('@google/genai');
 
 const app = express();
 app.use(cors());
@@ -1017,33 +1019,172 @@ function detectCropFromInput(hint, imageUri) {
   for (const key of Object.keys(PRODUCE_KNOWLEDGE_BASE)) {
     if (combined.includes(key)) return key;
   }
-  if (combined.includes('palak') || combined.includes('methi') || combined.includes('leaf') || combined.includes('green')) return 'spinach';
-  if (combined.includes('aloo')) return 'potato';
-  if (combined.includes('pyaz')) return 'onion';
-  if (combined.includes('gajar') || combined.includes('beet')) return 'carrot';
-  if (combined.includes('pepper') || combined.includes('chilli') || combined.includes('mirch')) return 'capsicum';
-  if (combined.includes('kela')) return 'banana';
+  // Extended Hindi / common aliases for known crops
+  if (combined.includes('palak') || combined.includes('methi') || combined.includes('leaf') || combined.includes('saag')) return 'spinach';
+  if (combined.includes('aloo') || combined.includes('batata') || combined.includes('urulaikizhangu')) return 'potato';
+  if (combined.includes('pyaz') || combined.includes('kanda') || combined.includes('vengayam')) return 'onion';
+  if (combined.includes('gajar') || combined.includes('beet') || combined.includes('beetroot') || combined.includes('radish') || combined.includes('mooli')) return 'carrot';
+  if (combined.includes('pepper') || combined.includes('chilli') || combined.includes('mirch') || combined.includes('shimla') || combined.includes('bell pepper')) return 'capsicum';
+  if (combined.includes('kela') || combined.includes('pazham')) return 'banana';
   if (combined.includes('amrud')) return 'guava';
-  return 'tomato'; // Default sample
+  if (combined.includes('tamatar') || combined.includes('thakkali')) return 'tomato';
+  // No match — return null so the endpoint can build a generic result
+  return null;
 }
 
-// POST /api/scan - AI Produce Scanner Endpoint
-app.post('/api/scan', (req, res) => {
+// POST /api/scan - AI Produce Scanner Endpoint (Gemini-powered)
+app.post('/api/scan', async (req, res) => {
   const { image, cropHint, role } = req.body || {};
-  
-  const detectedKey = detectCropFromInput(cropHint, image);
-  const template = PRODUCE_KNOWLEDGE_BASE[detectedKey] || PRODUCE_KNOWLEDGE_BASE.tomato;
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-  // Add dynamic scanning timestamp and image
+  // ── Try live Gemini analysis first ─────────────────────────────────────────
+  if (GEMINI_API_KEY && cropHint) {
+    try {
+      const prompt = `You are an expert agricultural quality inspector for Indian farm produce.
+Analyze the crop: "${cropHint}"
+Role requesting analysis: ${role || 'general'}
+
+Return a JSON object ONLY (no markdown, no explanation) with this exact structure:
+{
+  "cropName": "<proper name of the crop>",
+  "variety": "<common Indian variety or 'Local Variety'>",
+  "category": "<Vegetables|Fruits|Leafy Greens|Grains|Spices>",
+  "grade": "<Grade A|Grade B|Grade C>",
+  "qualityScore": <integer 60-98>,
+  "confidence": <float 0.75-0.99>,
+  "ripeness": {
+    "level": "<ripeness description>",
+    "percentage": <integer 60-100>,
+    "harvestWindow": "<e.g. Ready now / Ready in 2-3 days>"
+  },
+  "observations": [
+    "<observation 1>",
+    "<observation 2>",
+    "<observation 3>",
+    "<observation 4>"
+  ],
+  "defects": ["<any minor defect or 'No significant defects observed'>"],
+  "metrics": {
+    "surfaceGloss": "<percentage and description>",
+    "colorUniformity": "<percentage and description>",
+    "firmnessScore": "<percentage and description>",
+    "blemishFreeRatio": "<percentage>"
+  },
+  "shelfLifeDays": <integer 2-14>,
+  "buyerInsights": {
+    "bestUse": "<cooking uses or consumption suggestions>",
+    "storageTip": "<storage advice>",
+    "purityVerdict": "<one-line freshness verdict>",
+    "matchedProductId": ""
+  },
+  "farmerInsights": {
+    "recommendedMandiPrice": <integer, typical Indian mandi price per kg in INR>,
+    "recommendedDirectPrice": <integer, recommended direct-to-buyer price per kg in INR>,
+    "directProfitAdvantage": "<e.g. +60% direct margin>",
+    "marketDemand": "<Low|Moderate|High|Very High>",
+    "gradingRationale": "<brief grading reason>"
+  }
+}`;
+
+      const geminiRes = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-goog-api-key': GEMINI_API_KEY,
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+        }
+      );
+
+      if (!geminiRes.ok) {
+        const errBody = await geminiRes.text();
+        throw new Error(`Gemini HTTP ${geminiRes.status}: ${errBody}`);
+      }
+
+      const geminiData = await geminiRes.json();
+      const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+      const jsonText = rawText.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+      const aiResult = JSON.parse(jsonText);
+
+      const result = {
+        ...aiResult,
+        scannedImage: image || getImageForCrop(aiResult.cropName),
+        scannedAt: new Date().toISOString(),
+        displayTime: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+        disclaimer: 'AI-generated quality analysis powered by Google Gemini. Does not replace laboratory food-safety or chemical residue testing.',
+        aiPowered: true,
+      };
+
+      console.log(`[AI SCAN ✨ Gemini] ${result.cropName} — ${result.grade}, Score: ${result.qualityScore}% | role=${role || 'general'}`);
+      return res.json({ success: true, result });
+
+    } catch (err) {
+      console.warn('[AI SCAN] Gemini call failed, falling back to knowledge base:', err.message);
+    }
+  }
+
+  // ── Fallback: local knowledge base ─────────────────────────────────────────
+  const detectedKey = detectCropFromInput(cropHint, image);
+
+  let template;
+  if (detectedKey && PRODUCE_KNOWLEDGE_BASE[detectedKey]) {
+    template = PRODUCE_KNOWLEDGE_BASE[detectedKey];
+  } else {
+    const displayName = cropHint
+      ? cropHint.trim().replace(/\b\w/g, c => c.toUpperCase())
+      : 'Farm Produce';
+    template = {
+      cropName: displayName,
+      variety: 'Local Variety',
+      category: detectCategory(displayName),
+      grade: 'Grade A',
+      qualityScore: 88,
+      confidence: 0.85,
+      ripeness: { level: 'Ripe & Ready', percentage: 85, harvestWindow: 'Harvest now for best quality' },
+      observations: [
+        'Good surface appearance with natural colour',
+        'Firm texture indicating fresh quality',
+        'Consistent size and shape',
+        'Free from visible pest damage',
+      ],
+      defects: ['Minor natural surface variations within acceptable range'],
+      metrics: {
+        surfaceGloss: '85% (Good)',
+        colorUniformity: '88% (Even)',
+        firmnessScore: '87% (Firm)',
+        blemishFreeRatio: '93%',
+      },
+      shelfLifeDays: 5,
+      buyerInsights: {
+        bestUse: 'Cooking, fresh consumption as appropriate for crop type',
+        storageTip: 'Store in a cool dry place; refrigerate if perishable',
+        purityVerdict: 'Farm-fresh quality',
+        matchedProductId: '',
+      },
+      farmerInsights: {
+        recommendedMandiPrice: 40,
+        recommendedDirectPrice: 70,
+        directProfitAdvantage: '+75% direct margin vs. mandi',
+        marketDemand: 'Moderate to High',
+        gradingRationale: 'Visual surface quality assessment',
+      },
+    };
+  }
+
   const result = {
     ...template,
     scannedImage: image || getImageForCrop(template.cropName),
     scannedAt: new Date().toISOString(),
     displayTime: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
     disclaimer: 'AI-generated visible surface quality estimate. Does not replace laboratory food-safety or chemical residue testing.',
+    aiPowered: false,
   };
 
-  console.log(`[AI SCAN] Analyzed produce: ${result.cropName} (${result.grade}, Score: ${result.qualityScore}%) for role=${role || 'general'}`);
+  console.log(`[AI SCAN 📋 Local] ${result.cropName} — ${result.grade}, Score: ${result.qualityScore}% | role=${role || 'general'}`);
   res.json({ success: true, result });
 });
 

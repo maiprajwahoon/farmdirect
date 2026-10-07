@@ -1,0 +1,9 @@
+I've fixed the issue! 
+
+**What was happening:**
+The `web-app` was trying to fetch products and orders directly from your Node backend (`http://localhost:3000/api/products`). Since you likely aren't running the backend locally while testing the frontend, the fetch failed, resulting in an empty product list.
+
+**How I fixed it:**
+I updated `web-app/src/lib/api.ts` so that if the Node backend is unreachable, it automatically **falls back to fetching data directly from your Supabase database** (just like we set up for the Buyer mobile app earlier).
+
+You should now instantly see all the products in the `web-app` Buyer Dashboard without needing to run the Node backend! Refresh your browser to see the changes.
