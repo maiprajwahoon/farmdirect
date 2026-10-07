@@ -10,7 +10,10 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { colors, radius, spacing } from './src/theme';
-import { api, getApiBaseUrl } from './src/services/mockApi';
+import { api } from './src/services/mockApi';
+import { Asset } from 'expo-asset';
+
+const resolveLocal = (img) => Asset.fromModule(img).uri;
 import { categories, demoOrders, products } from './src/data';
 
 import NearbyScreen from './src/screens/Nearby';
@@ -38,42 +41,36 @@ function MainApp() {
 
   const fetchLiveProducts = async () => {
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/products`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.products) && data.products.length > 0) {
-          setLiveProducts(data.products);
-          // Sync global products array in-memory
-          products.length = 0;
-          products.push(...data.products);
-        }
+      const data = await api.searchProducts('');
+      if (data && Array.isArray(data) && data.length > 0) {
+        setLiveProducts(data);
+        // Sync global products array in-memory
+        products.length = 0;
+        products.push(...data);
       }
     } catch (e) {}
   };
 
   const fetchLiveOrders = async () => {
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/orders`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.orders)) {
-          setOrders(prev => {
-            const map = new Map();
-            // Server orders first
-            data.orders.forEach(o => {
-              map.set(o.id, {
-                ...o,
-                total: Number(o.total !== undefined ? o.total : (o.totalAmount || 0)),
-                farmer: o.farmer || 'Green Valley Farm',
-              });
+      const data = await api.getOrders();
+      if (data && Array.isArray(data)) {
+        setOrders(prev => {
+          const map = new Map();
+          // Server orders first
+          data.forEach(o => {
+            map.set(o.id, {
+              ...o,
+              total: Number(o.total !== undefined ? o.total : (o.totalAmount || 0)),
+              farmer: o.farmer || 'Green Valley Farm',
             });
-            // Keep local demo orders that aren't on server
-            prev.forEach(o => {
-              if (!map.has(o.id)) map.set(o.id, o);
-            });
-            return Array.from(map.values());
           });
-        }
+          // Keep local demo orders that aren't on server
+          prev.forEach(o => {
+            if (!map.has(o.id)) map.set(o.id, o);
+          });
+          return Array.from(map.values());
+        });
       }
     } catch (e) {}
   };
@@ -552,7 +549,7 @@ function Explore({ products, go, addToCart, wishlist, toggleWishlist, cartCount,
 function ProductDetail({ product, back, cartCount, addToCart, wishlist, toggleWishlist, go }) {
   const [qty, setQty] = useState(1);
   const handleAdd = () => { addToCart(product.id, qty); Alert.alert('Added to Cart', `${qty} × ${product.name} added to your cart.`); };
-  return <ScrollView style={styles.screen} contentContainerStyle={{paddingBottom:30}}><View style={styles.detailImageWrap}><Image source={{uri: product.image}} style={styles.detailImage}/><View style={styles.detailAiPill}><Ionicons name="sparkles" size={12} color="#7C3AED" /><Text style={styles.detailAiPillText}>AI Studio Produce Photography</Text></View><Pressable style={styles.floatingBack} onPress={back}><Ionicons name="arrow-back" size={22} color={colors.ink}/></Pressable><Pressable style={styles.floatingCart} onPress={()=>go('cart')}><Ionicons name="cart-outline" size={22} color={colors.ink}/>{cartCount ? <View style={styles.badge}><Text style={styles.badgeText}>{cartCount}</Text></View> : null}</Pressable></View><View style={styles.detailBody}><View style={styles.rowBetween}><View style={{flex:1}}><Text style={styles.detailTitle}>{product.name}</Text><Text style={styles.detailSub}>{product.farmer} • {product.location}</Text></View><Pressable style={styles.detailWish} onPress={()=>toggleWishlist(product.id)}><Ionicons name={wishlist.includes(product.id) ? 'heart' : 'heart-outline'} size={24} color={wishlist.includes(product.id) ? colors.danger : colors.ink}/></Pressable></View><View style={styles.priceLine}><Text style={styles.detailPrice}>₹{product.price}</Text><Text style={styles.detailUnit}> / {product.unit}</Text><View style={[styles.statusPill, product.quality==='Verified' ? styles.successPill : product.quality==='Pending' ? styles.warnPill : styles.neutralPill]}><Text style={[styles.statusText, product.quality==='Verified' ? styles.successText : product.quality==='Pending' ? styles.warnText : styles.neutralText]}>{product.quality}</Text></View></View><Text style={styles.detailDesc}>{product.description}</Text><InfoSection title="Quality information"><InfoRow icon="shield-checkmark-outline" title="Quality status" value={product.quality}/><InfoRow icon="leaf-outline" title="Harvest date" value={product.harvest}/><Text style={styles.disclaimer}>AI estimates and seller-provided details are informational and do not replace professional inspection or food-safety testing.</Text></InfoSection><InfoSection title="From the farmer"><InfoRow icon="person-outline" title="Farm" value={product.farmer}/><InfoRow icon="location-outline" title="Location" value={product.location}/></InfoSection><View style={styles.qtyBox}><Text style={styles.qtyLabel}>Quantity</Text><View style={styles.qtyControls}><Pressable onPress={()=>setQty(Math.max(1, qty-1))} style={styles.qtyBtn}><Ionicons name="remove" size={18} color={colors.ink}/></Pressable><Text style={styles.qtyValue}>{qty}</Text><Pressable onPress={()=>setQty(qty+1)} style={styles.qtyBtn}><Ionicons name="add" size={18} color={colors.ink}/></Pressable></View></View><View style={styles.actionRow}><Pressable style={styles.secondaryButton} onPress={handleAdd}><Ionicons name="cart-outline" size={19} color={colors.primary}/><Text style={styles.secondaryButtonText}>Add to Cart</Text></Pressable><Pressable style={styles.primaryButtonFlex} onPress={()=>{addToCart(product.id, qty); go('cart')}}><Text style={styles.primaryButtonText}>Buy Now</Text></Pressable></View></View></ScrollView>;
+  return <ScrollView style={styles.screen} contentContainerStyle={{paddingBottom:30}}><View style={styles.detailImageWrap}><Image source={{uri: product.image}} style={styles.detailImage}/>{product.isAiGenerated && <View style={styles.detailAiPill}><Ionicons name="sparkles" size={12} color="#7C3AED" /><Text style={styles.detailAiPillText}>AI Studio Produce Photography</Text></View>}<Pressable style={styles.floatingBack} onPress={back}><Ionicons name="arrow-back" size={22} color={colors.ink}/></Pressable><Pressable style={styles.floatingCart} onPress={()=>go('cart')}><Ionicons name="cart-outline" size={22} color={colors.ink}/>{cartCount ? <View style={styles.badge}><Text style={styles.badgeText}>{cartCount}</Text></View> : null}</Pressable></View><View style={styles.detailBody}><View style={styles.rowBetween}><View style={{flex:1}}><Text style={styles.detailTitle}>{product.name}</Text><Text style={styles.detailSub}>{product.farmer} • {product.location}</Text></View><Pressable style={styles.detailWish} onPress={()=>toggleWishlist(product.id)}><Ionicons name={wishlist.includes(product.id) ? 'heart' : 'heart-outline'} size={24} color={wishlist.includes(product.id) ? colors.danger : colors.ink}/></Pressable></View><View style={styles.priceLine}><Text style={styles.detailPrice}>₹{product.price}</Text><Text style={styles.detailUnit}> / {product.unit}</Text><View style={[styles.statusPill, product.quality==='Verified' ? styles.successPill : product.quality==='Pending' ? styles.warnPill : styles.neutralPill]}><Text style={[styles.statusText, product.quality==='Verified' ? styles.successText : product.quality==='Pending' ? styles.warnText : styles.neutralText]}>{product.quality}</Text></View></View><Text style={styles.detailDesc}>{product.description}</Text><InfoSection title="Quality information"><InfoRow icon="shield-checkmark-outline" title="Quality status" value={product.quality}/><InfoRow icon="leaf-outline" title="Harvest date" value={product.harvest}/><Text style={styles.disclaimer}>AI estimates and seller-provided details are informational and do not replace professional inspection or food-safety testing.</Text></InfoSection><InfoSection title="From the farmer"><InfoRow icon="person-outline" title="Farm" value={product.farmer}/><InfoRow icon="location-outline" title="Location" value={product.location}/></InfoSection><View style={styles.qtyBox}><Text style={styles.qtyLabel}>Quantity</Text><View style={styles.qtyControls}><Pressable onPress={()=>setQty(Math.max(1, qty-1))} style={styles.qtyBtn}><Ionicons name="remove" size={18} color={colors.ink}/></Pressable><Text style={styles.qtyValue}>{qty}</Text><Pressable onPress={()=>setQty(qty+1)} style={styles.qtyBtn}><Ionicons name="add" size={18} color={colors.ink}/></Pressable></View></View><View style={styles.actionRow}><Pressable style={styles.secondaryButton} onPress={handleAdd}><Ionicons name="cart-outline" size={19} color={colors.primary}/><Text style={styles.secondaryButtonText}>Add to Cart</Text></Pressable><Pressable style={styles.primaryButtonFlex} onPress={()=>{addToCart(product.id, qty); go('cart')}}><Text style={styles.primaryButtonText}>Buy Now</Text></Pressable></View></View></ScrollView>;
 }
 function InfoSection({ title, children }) { return <View style={styles.infoSection}><Text style={styles.infoSectionTitle}>{title}</Text>{children}</View>; }
 function InfoRow({ icon, title, value }) { return <View style={styles.infoRow}><Ionicons name={icon} size={19} color={colors.primary}/><View style={{flex:1}}><Text style={styles.infoTitle}>{title}</Text><Text style={styles.infoValue}>{value}</Text></View></View>; }
@@ -570,7 +567,7 @@ function CheckoutScreen({ back, cart, setCart, addOrder, go, products: catalogPr
   const [slot, setSlot] = useState('Today • 6:00 PM – 8:00 PM'); 
   const [payment, setPayment] = useState('UPI'); 
   const [busy, setBusy] = useState(false);
-
+  const [upiPin, setUpiPin] = useState('');
   const prodList = catalogProducts && catalogProducts.length > 0 ? catalogProducts : products;
   const items = Object.entries(cart)
     .filter(([,q]) => q > 0)
@@ -668,11 +665,44 @@ function CheckoutScreen({ back, cart, setCart, addOrder, go, products: catalogPr
           </View>
         </>
       )}
-      <Pressable style={styles.primaryButton} onPress={() => step < 4 ? setStep(step + 1) : place()} disabled={busy}>
+      {step === 5 && (
+        <View style={{ alignItems: 'center', paddingVertical: 30 }}>
+          <Text style={{ fontSize: 22, fontWeight: '800', marginBottom: 20 }}>Scan & Pay</Text>
+          <View style={{ backgroundColor: '#fff', padding: 24, borderRadius: 24, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 5, marginBottom: 20, borderWidth: 1, borderColor: colors.border }}>
+            <Ionicons name="phone-portrait-outline" size={60} color={colors.primary} style={{ opacity: 0.8 }} />
+          </View>
+          <Text style={{ fontSize: 32, fontWeight: '900', color: colors.primary, marginBottom: 4 }}>₹{total}</Text>
+          <Text style={{ fontSize: 13, color: colors.muted, marginBottom: 30 }}>FarmDirect UPI Gateway</Text>
+          <View style={{ width: '100%', paddingHorizontal: 20 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.muted, marginBottom: 10 }}>ENTER UPI PIN</Text>
+            <TextInput
+              style={{ fontSize: 24, letterSpacing: 10, textAlign: 'center', backgroundColor: '#fff', borderRadius: 12, paddingVertical: 15, borderWidth: 1, borderColor: colors.border }}
+              secureTextEntry
+              maxLength={6}
+              keyboardType="number-pad"
+              autoFocus
+              value={upiPin}
+              onChangeText={(v) => setUpiPin(v.replace(/\D/g, ''))}
+              placeholder="••••"
+            />
+          </View>
+        </View>
+      )}
+      <Pressable 
+        style={[styles.primaryButton, (step === 5 && upiPin.length < 4) && { opacity: 0.5 }]} 
+        onPress={() => {
+          if (step < 4) setStep(step + 1);
+          else if (step === 4 && payment === 'UPI') setStep(5);
+          else place();
+        }} 
+        disabled={busy || (step === 5 && upiPin.length < 4)}
+      >
         {busy ? <ActivityIndicator color="#fff" /> : (
           <>
-            <Text style={styles.primaryButtonText}>{step < 4 ? 'Continue' : 'Place Farm Order'}</Text>
-            <Ionicons name="arrow-forward" size={17} color="#fff" />
+            <Text style={styles.primaryButtonText}>
+              {step < 4 ? 'Continue' : step === 4 ? (payment === 'UPI' ? 'Proceed to Pay' : 'Place Farm Order') : `Pay ₹${total} securely`}
+            </Text>
+            <Ionicons name={step === 5 ? 'checkmark-circle-outline' : 'arrow-forward'} size={17} color="#fff" />
           </>
         )}
       </Pressable>
@@ -785,8 +815,12 @@ function Orders({ orders, go, cartCount, notificationsCount }) {
 }
 
 function OrderCard({ order, onPress }) {
-  const itemsList = Array.isArray(order.items) && order.items.length > 0
-    ? order.items
+  const resolvedItems = Array.isArray(order.items) && order.items.length > 0 
+    ? order.items 
+    : (order.buyer && Array.isArray(order.buyer.items) && order.buyer.items.length > 0 ? order.buyer.items : null);
+
+  const itemsList = resolvedItems
+    ? resolvedItems
     : (order.cropName ? [{ name: order.cropName, quantity: order.quantity, unit: order.quantityUnit }] : []);
 
   const totalAmount = Number(order.total !== undefined ? order.total : (order.totalAmount || 0));
@@ -835,8 +869,12 @@ function OrderDetails({ order, back }) {
   const norm = normalizeStatus(order.status);
   const current = Math.max(0, steps.indexOf(norm));
 
-  const itemsList = Array.isArray(order.items) && order.items.length > 0
-    ? order.items
+  const resolvedItems = Array.isArray(order.items) && order.items.length > 0 
+    ? order.items 
+    : (order.buyer && Array.isArray(order.buyer.items) && order.buyer.items.length > 0 ? order.buyer.items : null);
+
+  const itemsList = resolvedItems
+    ? resolvedItems
     : (order.cropName ? [{
         productName: order.cropName,
         variety: order.variety || 'Fresh Harvest',
@@ -1035,12 +1073,12 @@ function Scanner({ go, back, products, addToCart }) {
   };
 
   const SAMPLES = [
-    { name: 'Tomatoes', emoji: '🍅', hint: 'tomato', img: `${getApiBaseUrl()}/images/tomatoes.jpg` },
-    { name: 'Spinach', emoji: '🥬', hint: 'spinach', img: `${getApiBaseUrl()}/images/spinach.jpg` },
-    { name: 'Capsicum', emoji: '🫑', hint: 'capsicum', img: `${getApiBaseUrl()}/images/capsicum.jpg` },
-    { name: 'Potatoes', emoji: '🥔', hint: 'potato', img: `${getApiBaseUrl()}/images/potatoes.jpg` },
-    { name: 'Onions', emoji: '🧅', hint: 'onion', img: `${getApiBaseUrl()}/images/onions.jpg` },
-    { name: 'Carrots', emoji: '🥕', hint: 'carrot', img: `${getApiBaseUrl()}/images/carrots.jpg` },
+    { name: 'Tomatoes', emoji: '🍅', hint: 'tomato', img: resolveLocal(require('./assets/produce/tomatoes.jpg')) },
+    { name: 'Spinach', emoji: '🥬', hint: 'spinach', img: resolveLocal(require('./assets/produce/spinach.jpg')) },
+    { name: 'Capsicum', emoji: '🫑', hint: 'capsicum', img: resolveLocal(require('./assets/produce/capsicum.jpg')) },
+    { name: 'Potatoes', emoji: '🥔', hint: 'potato', img: resolveLocal(require('./assets/produce/potatoes.jpg')) },
+    { name: 'Onions', emoji: '🧅', hint: 'onion', img: resolveLocal(require('./assets/produce/onions.jpg')) },
+    { name: 'Carrots', emoji: '🥕', hint: 'carrot', img: resolveLocal(require('./assets/produce/carrots.jpg')) },
   ];
 
   if (!permission && Platform.OS !== 'web') {

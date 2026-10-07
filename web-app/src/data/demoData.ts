@@ -1,6 +1,5 @@
 // ─── Demo Data ────────────────────────────────────────────────────────────────
 
-const now = new Date().toISOString();
 const today = new Date().toISOString().split('T')[0];
 
 const daysAgo = (n: number) => {

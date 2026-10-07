@@ -86,7 +86,7 @@ export default function FarmerProductsScreen({ farmer, back, addToCart }) {
             farmerId: farmer.id,
             price: Number(item.price_per_unit),
             unit: item.unit,
-            image: item.image || "http://localhost:3000/images/tomatoes.jpg"
+            image: item.image || require('../../assets/produce/tomatoes.jpg')
           };
           addToCart(item.id, 1, cartProduct);
         }}

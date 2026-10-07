@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, type ReactNode } from 'react'
 import {
   LayoutDashboard, Sprout, ShoppingBag, Package2, TrendingUp, Bell, User,
-  ChevronRight, Plus, Search, MoreHorizontal, Leaf, ArrowUpRight, ArrowDownRight,
-  Minus, CheckCircle2, XCircle, Clock, Star, MapPin, Eye, Trash2, Cloud, Wind,
-  Droplets, AlertCircle, BarChart3, Sparkles, Bike, Play, PauseCircle, RefreshCw,
-  Package, Banknote, X, Loader2, Pencil, CheckCheck, Save, ServerCrash,
-  Activity, Wifi, WifiOff
+  ChevronRight, Plus, Search, Leaf, ArrowUpRight, ArrowDownRight,
+  Minus, CheckCircle2, XCircle, Clock, Star, MapPin, Trash2, Cloud, Wind,
+  Droplets, AlertCircle, BarChart3, Sparkles, Play, PauseCircle,
+  Package, Banknote, X, Loader2, Pencil, Save,
+  Wifi, WifiOff
 } from 'lucide-react'
 import { api, type Product, type Order } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
@@ -103,12 +103,16 @@ function Sidebar({ active, onNav, unread, user, logout }:
       </div>
       <nav className="sidebar-nav">
         <span className="nav-section-label">Navigation</span>
-        {NAV.map(({id,label,icon:Icon,hasBadge}) => (
+        {NAV.map((item) => {
+          const { id, label, icon: Icon } = item
+          const hasBadge = 'hasBadge' in item ? item.hasBadge : false
+          return (
           <button key={id} className={`nav-item ${active===id?'active':''}`} onClick={()=>onNav(id as Tab)}>
             <Icon size={18} />{label}
             {hasBadge && unread>0 && <span className="nav-badge">{unread}</span>}
           </button>
-        ))}
+          )
+        })}
         <span className="nav-section-label" style={{marginTop:'.5rem'}}>Account</span>
         <button className={`nav-item ${active==='profile'?'active':''}`} onClick={()=>onNav('profile')}>
           <User size={18} /> Profile
@@ -308,7 +312,7 @@ function ListingsScreen({ products, setProducts, onToast }:
 
   async function toggleAvail(p: Product) {
     try {
-      const updated = await api.updateProduct(p.id, { available: !p.available, status: !p.available ? 'active' : 'paused' })
+      const updated = await api.updateProduct(p.id, { available: !p.available, status: !p.available ? 'active' : 'paused' } as Partial<Product> & { status?: string })
       setProducts(prev => prev.map(x => x.id===p.id ? updated : x))
       onToast(`${p.name} ${updated.available ? 'activated' : 'paused'}`, 'success')
     } catch { onToast('Update failed', 'error') }
@@ -395,7 +399,7 @@ function ListingsScreen({ products, setProducts, onToast }:
 
       {/* Product cards */}
       <div className="grid-3 slide-up su-2">
-        {filtered.map((p,i) => {
+        {filtered.map((p) => {
           const isEditing = editId === p.id
           const [tmpPrice, setTmpPrice] = useState(p.price.toString())
           return (
@@ -519,7 +523,7 @@ function OrdersScreen({ orders, setOrders, onToast }:
         )}
         {filtered.map((o,idx) => {
           const act = actionCfg[o.status]
-          const buyerName = o.buyer?.name ?? o.buyerName ?? 'Buyer'
+          const buyerName = o.buyer?.name ?? 'Buyer'
           return (
             <div key={o.id} className={`card ${PASTEL[idx%6]}`} style={{ padding:'1.25rem 1.5rem', cursor:'pointer', transition:'transform .15s, box-shadow .15s' }} onClick={()=>setSelected(o)}
               onMouseEnter={e=>(e.currentTarget.style.transform='translateY(-1px)',e.currentTarget.style.boxShadow='var(--shadow-md)')}

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
-  Search, ShoppingBag, Sprout, Smartphone, Plus, Minus, MapPin, Star, Truck, ArrowRight,
-  ChevronRight, CheckCircle2, Clock, ShieldCheck, CreditCard, Leaf,
-  X, Loader2, Sparkles, Home, User
+  Search, ShoppingBag, Sprout, Smartphone, Plus, Minus, MapPin, Truck,
+  CheckCircle2, ShieldCheck, Leaf,
+  X, Loader2
 } from 'lucide-react'
 import { api, type Product, type Order } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
@@ -211,7 +211,7 @@ export default function BuyerDashboard() {
             </div>
 
             <div className="grid-4">
-              {filteredProducts.map((p, i) => (
+              {filteredProducts.map((p) => (
                 <div key={p.id} className="card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ height: 160, width: '100%', position: 'relative', background: 'var(--mint)' }}>
                     <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e=>(e.currentTarget.style.display='none')} />

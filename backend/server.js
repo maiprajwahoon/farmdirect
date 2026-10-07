@@ -38,7 +38,10 @@ function getImageForCrop(name) {
   if (n.includes('banana') || n.includes('kela')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/bananas.jpg';
   if (n.includes('mango') || n.includes('aam')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/mangoes.jpg';
   if (n.includes('guava') || n.includes('amrud')) return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/guava.jpg';
-  return (process.env.BACKEND_URL || 'http://localhost:3000') + '/images/tomatoes.jpg';
+  if (n.includes('cucumber') || n.includes('kakdi') || n.includes('kheera')) return 'https://placehold.co/600x400/e9efe9/2f5b3a?text=Cucumbers';
+  
+  // Generic fallback if not matched
+  return 'https://placehold.co/600x400/eeeeee/999999?text=Produce';
 }
 
 const defaultProducts = [
@@ -479,12 +482,52 @@ app.patch('/api/orders/:id', async (req, res) => {
 // ==========================================
 
 // GET /api/products - Buyer & Farmer fetch current live catalog
-app.get('/api/products', (req, res) => {
-  res.json({ success: true, products: catalog });
+app.get('/api/products', async (req, res) => {
+  let mergedMap = new Map();
+  catalog.forEach(p => mergedMap.set(p.name.toLowerCase(), p));
+
+  try {
+    const { data: remoteListings, error } = await supabase.from('listings').select('*');
+    if (!error && Array.isArray(remoteListings)) {
+      remoteListings.forEach(rl => {
+        const key = rl.product_name.toLowerCase();
+        const local = mergedMap.get(key) || {
+          id: rl.id,
+          name: rl.product_name,
+          category: rl.category || (rl.is_organic ? 'Organic Produce' : 'Vegetables'),
+          farmer: rl.farmer || 'Green Valley Farm',
+          location: rl.location || 'Ozar, Nashik',
+          quality: rl.quality || 'Verified',
+          harvest: rl.harvest || 'Recent',
+          description: rl.description || `Fresh ${rl.product_name} sourced directly from our farm.`,
+          image: rl.image || getImageForCrop(rl.product_name),
+          isAiGenerated: true,
+        };
+        mergedMap.set(key, {
+          ...local,
+          id: rl.id,
+          name: rl.product_name,
+          variety: rl.variety || local.variety || '',
+          price: rl.price_per_unit !== undefined ? rl.price_per_unit : local.price,
+          unit: rl.unit || local.unit || 'kg',
+          quantity: rl.quantity_available !== undefined ? rl.quantity_available : local.quantity,
+          available: rl.available !== undefined ? rl.available : local.available,
+          image: rl.image || local.image,
+          description: rl.description || local.description,
+          category: rl.category || local.category,
+          farmer: rl.farmer || local.farmer,
+          location: rl.location || local.location,
+        });
+      });
+    }
+  } catch (e) {}
+
+  const productsArray = Array.from(mergedMap.values());
+  res.json({ success: true, products: productsArray });
 });
 
 // POST /api/products - Farmer adds or updates a product
-app.post('/api/products', (req, res) => {
+app.post('/api/products', async (req, res) => {
   const p = req.body;
   if (!p) {
     return res.status(400).json({ success: false, error: 'Product payload required' });
@@ -506,7 +549,7 @@ app.post('/api/products', (req, res) => {
     quality: p.quality || 'Verified',
     harvest: p.harvest || 'Today',
     description: p.description || `Fresh ${name} sourced directly from our farm.`,
-    image: (p.image && !p.image.includes('unsplash.com')) ? p.image : getImageForCrop(name),
+    image: p.image || getImageForCrop(name),
     isAiGenerated: true,
     available: p.available !== undefined ? Boolean(p.available) : (p.status === 'active' || p.status === undefined),
     updatedAt: new Date().toISOString(),
@@ -519,12 +562,62 @@ app.post('/api/products', (req, res) => {
   }
 
   saveCatalog();
+  
+  // Sync to Supabase
+  try {
+    const supabasePayload = {
+      farmer_id: '11111111-1111-1111-1111-111111111111',
+      product_name: formatted.name,
+      variety: formatted.variety,
+      price_per_unit: formatted.price,
+      unit: formatted.unit,
+      quantity_available: formatted.quantity,
+      is_organic: formatted.category === 'Organic Produce',
+      available: formatted.available,
+      category: formatted.category,
+      farmer: formatted.farmer,
+      location: formatted.location,
+      quality: formatted.quality,
+      harvest: formatted.harvest,
+      description: formatted.description,
+      image: formatted.image
+    };
+    // if id is uuid update, else insert (or just let supabase assign uuid)
+    let res;
+    if (existingIdx >= 0 && catalog[existingIdx].id.length === 36) {
+      res = await supabase.from('listings').update(supabasePayload).eq('id', catalog[existingIdx].id);
+    } else {
+      res = await supabase.from('listings').insert([supabasePayload]);
+    }
+    
+    if (res.error) {
+      console.warn('Rich sync failed, retrying with minimal schema:', res.error.message);
+      const minimalPayload = {
+        farmer_id: '11111111-1111-1111-1111-111111111111',
+        product_name: formatted.name,
+        variety: formatted.variety,
+        price_per_unit: formatted.price,
+        unit: formatted.unit,
+        quantity_available: formatted.quantity,
+        is_organic: formatted.category === 'Organic Produce',
+        available: formatted.available
+      };
+      if (existingIdx >= 0 && catalog[existingIdx].id.length === 36) {
+        await supabase.from('listings').update(minimalPayload).eq('id', catalog[existingIdx].id);
+      } else {
+        await supabase.from('listings').insert([minimalPayload]);
+      }
+    }
+  } catch (e) {
+    console.warn('Supabase product sync failed:', e.message);
+  }
+  
   console.log(`[+] Product Catalog updated: ${formatted.name} (₹${formatted.price}/${formatted.unit}, Stock: ${formatted.quantity})`);
   res.json({ success: true, product: formatted, products: catalog });
 });
 
 // PUT /api/products/:id - Farmer updates stock, price, or availability
-app.put('/api/products/:id', (req, res) => {
+app.put('/api/products/:id', async (req, res) => {
   const { id } = req.params;
   const updates = req.body || {};
   const item = catalog.find(x => x.id === id || x.name.toLowerCase() === id.toLowerCase());
@@ -544,6 +637,33 @@ app.put('/api/products/:id', (req, res) => {
   item.updatedAt = new Date().toISOString();
 
   saveCatalog();
+  
+  // Sync to Supabase
+  try {
+    if (item.id.length === 36) {
+      const res = await supabase.from('listings').update({
+        price_per_unit: item.price,
+        quantity_available: item.quantity,
+        available: item.available,
+        product_name: item.name,
+        variety: item.variety
+      }).eq('id', item.id);
+      
+      if (res.error) {
+         console.warn('Rich sync failed in PUT, retrying with minimal schema:', res.error.message);
+         await supabase.from('listings').update({
+           price_per_unit: item.price,
+           quantity_available: item.quantity,
+           available: item.available,
+           product_name: item.name,
+           variety: item.variety
+         }).eq('id', item.id);
+      }
+    }
+  } catch (e) {
+    console.warn('Supabase product sync failed:', e.message);
+  }
+  
   console.log(`[+] Product ${item.name} updated: Stock=${item.quantity}, Price=₹${item.price}, Available=${item.available}`);
   res.json({ success: true, product: item, products: catalog });
 });

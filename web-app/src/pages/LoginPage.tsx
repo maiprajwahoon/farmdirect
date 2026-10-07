@@ -67,7 +67,7 @@ export default function LoginPage() {
   // ── Demo logins ─────────────────────────────────────────────────────────────
   async function demoLogin(role: AppRole) {
     setLoading(true); setError('')
-    const { data, error: e } = await supabase.auth.signInWithPassword({
+    const { data, error: _e } = await supabase.auth.signInWithPassword({
       email: role === 'farmer' ? 'demo.farmer@farmdirect.in' : 'demo.buyer@farmdirect.in',
       password: 'FarmDirectDemo2026!',
     }).catch(() => ({ data: null, error: null })) as any

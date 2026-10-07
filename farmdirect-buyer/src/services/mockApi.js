@@ -1,29 +1,34 @@
 import { products } from '../data';
 import { supabase } from './supabase';
-
+import { Asset } from 'expo-asset';
 import { Platform } from 'react-native';
-import Constants from 'expo-constants';
 
-export function getApiBaseUrl() {
-  if (Platform.OS === 'web') {
-    return 'http://localhost:3000';
-  }
-  try {
-    const hostUri =
-      Constants?.expoConfig?.hostUri ||
-      Constants?.manifest2?.extra?.expoClient?.hostUri ||
-      Constants?.manifest?.debuggerHost;
-    if (hostUri) {
-      const ip = hostUri.split(':')[0];
-      if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
-        return `http://${ip}:3000`;
-      }
-    }
-  } catch (e) {}
-  return 'http://192.168.0.158:3000';
+const localImages = {
+  tomatoes: Asset.fromModule(require('../../assets/produce/tomatoes.jpg')).uri,
+  potatoes: Asset.fromModule(require('../../assets/produce/potatoes.jpg')).uri,
+  capsicum: Asset.fromModule(require('../../assets/produce/capsicum.jpg')).uri,
+  spinach: Asset.fromModule(require('../../assets/produce/spinach.jpg')).uri,
+  onions: Asset.fromModule(require('../../assets/produce/onions.jpg')).uri,
+  carrots: Asset.fromModule(require('../../assets/produce/carrots.jpg')).uri,
+  bananas: Asset.fromModule(require('../../assets/produce/bananas.jpg')).uri,
+  guava: Asset.fromModule(require('../../assets/produce/guava.jpg')).uri,
+};
+
+function resolveLocalImage(cropName) {
+  const n = (cropName || '').toLowerCase();
+  if (n.includes('tomato')) return localImages.tomatoes;
+  if (n.includes('potato')) return localImages.potatoes;
+  if (n.includes('capsicum') || n.includes('pepper') || n.includes('shimla')) return localImages.capsicum;
+  if (n.includes('spinach') || n.includes('palak') || n.includes('leaf')) return localImages.spinach;
+  if (n.includes('onion') || n.includes('pyaz')) return localImages.onions;
+  if (n.includes('carrot') || n.includes('gajar')) return localImages.carrots;
+  if (n.includes('banana')) return localImages.bananas;
+  if (n.includes('guava')) return localImages.guava;
+  if (n.includes('cucumber') || n.includes('kakdi') || n.includes('kheera')) return 'https://placehold.co/600x400/e9efe9/2f5b3a?text=Cucumbers';
+  return 'https://placehold.co/600x400/eeeeee/999999?text=Produce'; // fallback
 }
 
-export const API_BASE_URL = getApiBaseUrl();
+// API base URL removed as backend is entirely on Supabase
 
 export const api = {
   async sendOtp(email) {
@@ -98,20 +103,56 @@ export const api = {
   },
 
   async searchProducts(query) {
-    await sleep(220);
+    const q = (query || '').trim().toLowerCase();
+    let results = [];
+    
+    try {
+      // 1. Try fetching from local backend first to get rich catalog (images, descriptions) synced with Farmer App
+      let backendUrl = 'http://localhost:3000/api/products';
+      if (Platform.OS === 'android') backendUrl = 'http://10.0.2.2:3000/api/products';
+      
+      const res = await fetch(backendUrl).catch(() => null);
+      if (res && res.ok) {
+        const json = await res.json();
+        if (json.success && json.products) {
+          results = json.products;
+        }
+      }
+      
+      // 2. Fallback to Supabase listings table if backend is unreachable
+      if (results.length === 0) {
+        const { data, error } = await supabase.from('listings').select('*');
+        if (error) throw error;
+        
+        results = data.map(p => ({
+          id: p.id,
+          name: p.product_name,
+          category: p.category || (p.is_organic ? 'Organic Produce' : 'Vegetables'),
+          variety: p.variety,
+          unit: p.unit || 'kg',
+          price: p.price_per_unit || 0,
+          farmer: p.farmer || 'Farmer', 
+          location: p.location || 'Local',
+          quality: p.quality || 'Verified',
+          harvest: p.harvest || 'Recent',
+          description: p.description || '',
+          image: p.image || resolveLocalImage(p.product_name),
+          quantity: p.quantity_available
+        }));
+      }
 
-    const q = query.trim().toLowerCase();
+      if (!q) return results;
 
-    if (!q) {
-      return products;
+      return results.filter((p) =>
+        [p.name, p.category, p.farmer, p.location]
+          .join(' ')
+          .toLowerCase()
+          .includes(q)
+      );
+    } catch (e) {
+      console.warn('searchProducts error:', e);
+      return [];
     }
-
-    return products.filter((p) =>
-      [p.name, p.category, p.farmer, p.location]
-        .join(' ')
-        .toLowerCase()
-        .includes(q)
-    );
   },
 
   async checkout(payload) {
@@ -125,93 +166,79 @@ export const api = {
 
     const firstItemProduct = items[0]?.product || items[0] || {};
     const farmerId = firstItemProduct.farmerId || payload.farmerId || 'demo-farmer-1';
+    const orderNumber = `FD-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const serverPayload = {
+      id: orderNumber,
+      orderNumber,
       buyerId: payload.buyerId || 'buyer-demo',
-      buyerName: payload.buyerName || 'Sunita Patil',
-      buyerPhone: payload.buyerPhone || '+91 98201 45829',
       farmerId: farmerId,
-      farmer: payload.farmer || firstItemProduct.farmer || 'Green Valley Farm',
       listingId: firstItemProduct.id || payload.listingId || 'listing-001',
-      items: items.map((item) => {
-        const prod = item.product || item;
-        return {
-          productId: prod.id || prod.productId || null,
-          productName: prod.name || 'Unknown Product',
-          variety: prod.variety || '',
-          quantity: Number(item.quantity_available || item.quantity || item.qty) || 1,
-          unit: prod.unit || 'kg',
-          price: Number(prod.price) || 0,
-          image: prod.image || '',
-        };
-      }),
-      total: Number(payload.total) || 0,
+      buyer: {
+        id: payload.buyerId || 'buyer-demo',
+        name: payload.buyerName || 'Sunita Patil',
+        phone: payload.buyerPhone || '+91 98201 45829',
+        address: payload.address || 'Not specified',
+        deliverySlot: payload.slot || 'Not specified',
+        paymentMethod: payload.payment || 'UPI',
+        items: items.map((item) => {
+          const prod = item.product || item;
+          return {
+            productId: prod.id || prod.productId || null,
+            productName: prod.name || 'Unknown Product',
+            variety: prod.variety || '',
+            quantity: Number(item.quantity_available || item.quantity || item.qty) || 1,
+            unit: prod.unit || 'kg',
+            price: Number(prod.price) || 0,
+            image: prod.image || '',
+          };
+        })
+      },
+      cropName: firstItemProduct.name || 'Assorted Vegetables',
+      variety: firstItemProduct.variety || 'Regular',
+      quantity: Number(items[0]?.quantity_available || items[0]?.quantity || items[0]?.qty) || 1,
+      quantityUnit: firstItemProduct.unit || 'kg',
+      pricePerUnit: Number(firstItemProduct.price) || 0,
       totalAmount: Number(payload.total) || 0,
-      address: payload.address || 'Not specified',
-      slot: payload.slot || 'Not specified',
-      payment: payload.payment || 'UPI',
-      instructions: `Deliver to: ${payload.address || 'Not specified'}, Slot: ${payload.slot || 'Not specified'}`,
+      deliveryType: 'delivery',
+      status: 'new',
+      statusHistory: [{ status: 'new', timestamp: new Date().toISOString() }],
+      buyerInstructions: `Deliver to: ${payload.address || 'Not specified'}, Slot: ${payload.slot || 'Not specified'}`,
+      paymentStatus: 'pending',
+      photos: []
     };
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const { data, error } = await supabase.from('orders').insert(serverPayload).select().single();
 
-      const response = await fetch(
-        `${getApiBaseUrl()}/api/orders`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(serverPayload),
-          signal: controller.signal,
-        }
-      );
-      clearTimeout(timeoutId);
-
-      if (response.ok) {
-        const result = await response.json();
-        if (result && result.success && result.order) {
-          console.log(
-            'Order created successfully on server:',
-            result.order.orderNumber
-          );
-
-          return {
-            ...result.order,
-            total: Number(result.order.total || result.order.totalAmount || payload.total),
-            date: new Date(
-              result.order.createdAt || Date.now()
-            ).toLocaleDateString('en-IN', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-            }),
-          };
-        }
+      if (!error && data) {
+        console.log('Order created successfully on server:', data.orderNumber);
+        return {
+          ...data,
+          items: payload.items || [],
+          total: Number(data.total || data.totalAmount || payload.total),
+          date: new Date(data.createdAt || Date.now()).toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          }),
+        };
+      } else {
+        throw error || new Error('Unknown error');
       }
     } catch (error) {
       console.warn(
-        'Backend server order sync unavailable or blocked by network, completing order locally:',
+        'Supabase order sync unavailable or blocked by network, completing order locally:',
         error.message || error
       );
     }
 
     // Resilient offline-first confirmation: ensures checkout never crashes or traps the user
     return {
+      ...serverPayload,
+      items: payload.items || [],
+      total: payload.total || serverPayload.totalAmount,
       id: `ord_${Date.now()}`,
-      orderNumber: `FD-${Math.floor(100000 + Math.random() * 900000)}`,
-      buyerId: serverPayload.buyerId,
-      buyerName: serverPayload.buyerName,
-      buyerPhone: serverPayload.buyerPhone,
-      farmerId: serverPayload.farmerId,
-      farmer: serverPayload.farmer,
-      items: serverPayload.items,
-      total: serverPayload.total,
-      address: serverPayload.address,
-      slot: serverPayload.slot,
-      payment: serverPayload.payment,
       status: 'Confirmed',
       createdAt: new Date().toISOString(),
       date: new Date().toLocaleDateString('en-IN', {
@@ -224,35 +251,34 @@ export const api = {
 
   async getOrders() {
     try {
-      const response = await fetch(`${getApiBaseUrl()}/api/orders`);
-      if (response.ok) {
-        const result = await response.json();
-        if (result && Array.isArray(result.orders)) {
-          return result.orders;
+      // 1. Try fetching from backend first for normalized orders
+      let backendUrl = 'http://localhost:3000/api/orders';
+      if (Platform.OS === 'android') backendUrl = 'http://10.0.2.2:3000/api/orders';
+      
+      const res = await fetch(backendUrl).catch(() => null);
+      if (res && res.ok) {
+        const json = await res.json();
+        if (json.success && json.orders) {
+          // Filter to just this user's orders if needed, but for now return all
+          return json.orders;
         }
+      }
+
+      // 2. Fallback to Supabase
+      const { data, error } = await supabase.from('orders').select('*');
+      if (!error && data) {
+        return data.map(o => ({
+          ...o,
+          total: Number(o.total || o.totalAmount || 0),
+          items: o.items || (o.buyer && o.buyer.items) || [],
+        }));
       }
     } catch (e) {}
     return null;
   },
 
   async scanProduce(imageUri, cropHint = '') {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
-      const response = await fetch(`${getApiBaseUrl()}/api/scan`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageUri, cropHint, role: 'buyer' }),
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.result) return data.result;
-      }
-    } catch (e) {
-      console.log('Notice: Utilizing high-precision local AI produce model');
-    }
+    // Only use local AI analyze, bypassing any backend connection
     await sleep(600);
     return localAnalyzeProduce(cropHint, imageUri, 'buyer');
   },
@@ -461,7 +487,7 @@ export function localAnalyzeProduce(hint = '', imageUri = '', role = 'buyer') {
   const item = KB[key] || KB.tomato;
   return {
     ...item,
-    scannedImage: imageUri || (item.cropName.includes('Tomato') ? 'http://localhost:3000/images/tomatoes.jpg' : ''),
+    scannedImage: imageUri || '',
     scannedAt: new Date().toISOString(),
     displayTime: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
     disclaimer: 'AI-generated visible surface quality estimate. Does not replace laboratory food-safety or chemical residue testing.'

@@ -28,7 +28,7 @@ export type OrderItem = {
 
 export type BuyerInfo = {
   id: string; name: string; businessName: string; businessType?: string
-  phone: string; address: string; district: string; state: string
+  email?: string; phone: string; address: string; district: string; state: string
   isVerified: boolean; rating: number; deliverySlot: string
 }
 
